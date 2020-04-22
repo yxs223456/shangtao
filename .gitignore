@@ -4,3 +4,4 @@ runtime/*
 *.log
 .idea
 config/*
+upload/*

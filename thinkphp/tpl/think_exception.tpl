@@ -409,9 +409,6 @@
     </div>
     <?php } ?>
 
-    <div class="copyright">
-        <span style='color:#777;'><a style='text-decoration:none;color:#777;' title="官方网站" href="http://www.wstmart.net">WSTMart</a> @ <a style='text-decoration:none;color:#777;' title="官方网站" href="http://www.shangtao.net">商淘软件</a> - 为电商加速</span> 
-    </div>
     <?php if(\think\facade\App::isDebug()) { ?>
     <script>
         var LINE = <?php echo $line; ?>;
