@@ -16,15 +16,24 @@ use think\Db;
  * 阿里大于短信接口
  */
 class Alidayu extends Base{
-	public function getConfigs(){
-		$data = cache('alidayu_sms');
-		if(!$data){
-			$rs = Db::name('addons')->where('name','Alidayu')->field('config')->find();
-		    $data =  json_decode($rs['config'],true);
-		    cache('alidayu_sms',$data,31622400);
-		}
-		return $data;
-	}
+//	public function getConfigs(){
+//		$data = cache('alidayu_sms');
+//		if(!$data){
+//			$rs = Db::name('addons')->where('name','Alidayu')->field('config')->find();
+//		    $data =  json_decode($rs['config'],true);
+//		    cache('alidayu_sms',$data,31622400);
+//		}
+//		return $data;
+//	}
+
+    public function getConfigs(){
+        $data = cache('alidayu_sms');
+        if(!$data){
+            $data =  $data =  config("addon.alidayu");
+            cache('alidayu_sms',$data,31622400);
+        }
+        return $data;
+    }
 
 	public function install(){
 		Db::startTrans();

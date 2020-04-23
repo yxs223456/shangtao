@@ -68,6 +68,7 @@ class Addons extends Base{
 			foreach ($page['data'] as $key => $v){
 				$page['data'][$key]['statusName'] = WSTLangAddonStatus($v['status']);
 				$page['data'][$key]['hasConf'] = ($v['isConfig']!='')?1:0;
+				$page['data'][$key]['isConfig'] = 0;
 			}
 		}
 		cache('WST_ADDONS_MAPS',null);
