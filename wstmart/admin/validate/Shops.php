@@ -82,6 +82,8 @@ class Shops extends Validate{
         'add'   =>  ['shopSn','loginName','loginPwd','shopName','shopCompany','longitude','latitude','shopkeeper','telephone','shopCompany','shopTel','isSelf','shopImg',
                      'areaId','shopAddress','isInvoice','shopAtive','bankId','bankAreaId','bankNo','bankUserName','shopAtive'],
         'edit'  =>  ['shopSn','loginName','loginPwd','shopName','shopCompany','shopkeeper','telephone','shopCompany','shopTel','isSelf','shopImg',
+                     'areaId','shopAddress','isInvoice','shopAtive','bankId','bankAreaId','bankNo','bankUserName','shopAtive'],
+        'handleApply'  =>  ['shopSn','loginName','shopName','shopCompany','shopkeeper','telephone','shopCompany','shopTel','isSelf','shopImg',
                      'areaId','shopAddress','isInvoice','shopAtive','bankId','bankAreaId','bankNo','bankUserName','shopAtive']
     ]; 
     
