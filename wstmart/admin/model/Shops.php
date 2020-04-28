@@ -38,11 +38,10 @@ class Shops extends Base{
 			$order = $sortArr[0].' '.$sortArr[1];
 		}
 		return Db::table('__SHOPS__')->alias('s')->join('__AREAS__ a2','s.areaId=a2.areaId','left')
-//			       ->join('__USERS__ u','u.userId=s.userId','left')
+			       ->join('__SHOP_ADMIN__ u','u.id=s.shopAdminId','left')
 			       ->join('__SHOP_EXTRAS__ ss','s.shopId=ss.shopId','left')
 			       ->where($where)
-//			       ->field('u.loginName,s.shopId,shopSn,shopName,a2.areaName,shopkeeper,telephone,shopAddress,shopCompany,shopAtive,shopStatus')
-			       ->field('loginName,s.shopId,shopSn,shopName,a2.areaName,shopkeeper,telephone,shopAddress,shopCompany,shopAtive,shopStatus')
+			       ->field('u.userPhone,s.shopId,shopSn,shopName,a2.areaName,shopkeeper,telephone,shopAddress,shopCompany,shopAtive,shopStatus')
 			       ->order($order)
 			       ->paginate(input('limit/d'));
 	}
@@ -63,9 +62,9 @@ class Shops extends Base{
 		if($areaIdPath !='')$where[] = ['areaIdPath','like',$areaIdPath."%"];
 		return Db::table('__SHOPS__')->alias('s')->join('__AREAS__ a2','s.areaId=a2.areaId','left')
 		       ->join('__SHOP_EXTRAS__ ss','s.shopId=ss.shopId','left')
-//		       ->join('__USERS__ u','u.userId=s.userId','left')
+		       ->join('__SHOP_ADMIN__ u','u.id=s.shopAdminId','left')
 		       ->where($where)
-		       ->field('loginName,s.shopId,applyLinkMan,applyLinkTel,investmentStaff,isInvestment,shopName,a2.areaName,shopAddress,shopCompany,applyTime,applyStatus')
+		       ->field('u.userPhone,s.shopId,applyLinkMan,applyLinkTel,investmentStaff,isInvestment,shopName,a2.areaName,shopAddress,shopCompany,applyTime,applyStatus')
 		       ->order('s.shopId desc')->paginate(input('limit/d'));
 	}
 
@@ -139,7 +138,7 @@ class Shops extends Base{
      */
     public function getShopApply($id){
         $shop = $this->alias('s')->join('__SHOP_EXTRAS__ ss','s.shopId=ss.shopId','inner')
-//                   ->join('__USERS__ u','u.userId=s.userId','inner')
+                   ->join('__SHOP_ADMIN__ u','u.id=s.shopAdminId','inner')
                    ->where('s.shopId',$id)
                    ->find()
                    ->toArray();
@@ -157,6 +156,7 @@ class Shops extends Base{
 	 */
 	public function getById($id){
 		$shop = $this->alias('s')->join('__SHOP_EXTRAS__ ss','s.shopId=ss.shopId','inner')
+                   ->join('__SHOP_ADMIN__ u','u.id=s.shopAdminId','left')
                    ->where('s.shopId',$id)
                    ->find()
                    ->toArray();
@@ -204,20 +204,6 @@ class Shops extends Base{
 		if($num==0)return false;
 		return true;
 	}
-
-    /**
-     * 检测登陆名称是否重复
-     *
-     * @param $loginName
-     * @param int $shopId
-     * @return bool
-     */
-    public function checkLoginName($loginName, $shopId = 0)
-    {
-        $dbo = $this->where(['loginName' => $loginName, 'dataFlag' => 1]);
-        if ($shopId > 0) $dbo->where('shopId', '<>', $shopId);
-        return boolval($dbo->Count());
-    }
 
     /**
 	 * 处理申请
@@ -408,14 +394,14 @@ class Shops extends Base{
             //如果存在手机则发送手机号码提示
             $tpl = WSTMsgTemplates('PHONE_USER_SHOP_OPEN_SUCCESS');
             if( $tpl['tplContent']!='' && $tpl['status']=='1' && $data['applyLinkTel']!=''){
-                $params = ['tpl'=>$tpl,'params'=>['MALL_NAME'=>WSTConf("CONF.mallName"),'LOGIN_NAME'=>$shops->loginName]];
+                $params = ['tpl'=>$tpl,'params'=>['MALL_NAME'=>WSTConf("CONF.mallName"),'LOGIN_NAME'=>$shops->shopName]];
                 $rv = model('admin/LogSms')->sendSMS(0,$shopId,$data['applyLinkTel'],$params,$method,1);
             }
             //发送邮件
             $tpl = WSTMsgTemplates('EMAIL_USER_SHOP_OPEN_SUCCESS');
             if( $tpl['tplContent']!='' && $tpl['status']=='1' && $data['applyLinkEmail']){
                 $find = ['${LOGIN_NAME}','${MALL_NAME}'];
-                $replace = [$shops->loginName,WSTConf("CONF.mallName")];
+                $replace = [$shops->shopName,WSTConf("CONF.mallName")];
                 $sendRs = WSTSendMail($data['applyLinkEmail'],'申请入驻审核通过',str_replace($find,$replace,$tpl['content']));
             }
             // 会员发送一条商城消息
@@ -445,7 +431,7 @@ class Shops extends Base{
             $tpl = WSTMsgTemplates('EMAIL_SHOP_OPEN_FAIL');
             if( $tpl['tplContent']!='' && $tpl['status']=='1' && $data['applyLinkEmail']){
                 $find = ['${LOGIN_NAME}','${MALL_NAME}','${REASON}'];
-                $replace = [$shops->loginName,WSTConf("CONF.mallName"),$data['applyDesc']];
+                $replace = [$shops->shopName,WSTConf("CONF.mallName"),$data['applyDesc']];
                 $sendRs = WSTSendMail($data['applyLinkEmail'],'申请入驻失败',str_replace($find,$replace,$tpl['content']));
             }
             // 会员发送一条商城消息
@@ -615,11 +601,19 @@ class Shops extends Base{
         if($goodsCatIds=='')return WSTReturn('请选择经营范围');
         Db::startTrans();
         try{
+            //创建用户账号
+            $user = [];
+            $user['userPhone'] = input('post.userPhone');
+            $user['pwd'] = md5(input('post.pwd',"",'trim'));
+            $user['createTime'] = date("Y-m-d H:i:s");
+            model('shop_admin')->save($user);
+            $adminId = model('shop_admin')->id;
+
             //创建商家基础信息
             $data = input('post.');
             $data['createTime'] = date('Y-m-d H:i:s');
             $data['applyTime'] = date('Y-m-d H:i:s');
-            $data['loginPwd'] = md5($data['loginPwd']);
+            $data['shopAdminId'] = $adminId;
             $areaIds = model('Areas')->getParentIs($data['areaId']);
             if(!empty($areaIds))$data['areaIdPath'] = implode('_',$areaIds)."_";
             $areaIds = model('Areas')->getParentIs($data['bankAreaId']);
@@ -712,11 +706,9 @@ class Shops extends Base{
 		    if(!empty($areaIds))$data['areaIdPath'] = implode('_',$areaIds)."_";
 		    $areaIds = model('Areas')->getParentIs($data['bankAreaId']);
 		    if(!empty($areaIds))$data['bankAreaIdPath'] = implode('_',$areaIds)."_";
-            if ($this->isChangePwd($data['loginPwd'], $shops->loginPwd)) {
-                $data['loginPwd'] = md5($data['loginPwd']);
-            } else {
-                unset($data['loginPwd']);
-            }
+		    // 更新用户信息
+            model("ShopAdmin")->updateAdmin($shops->shopId, $shops->shopAdminId, $data['userPhone'], $data["pwd"]);
+
 	        WSTUnset($data,'id,shopId,userId,dataFlag,createTime,goodsCatIds,accredIds,isSelf,applyStatus,applyDesc');
 	        //启用上传图片
 			WSTUseImages(1, $shopId, $data['shopImg'],'shops','shopImg');
@@ -776,6 +768,7 @@ class Shops extends Base{
 	        Db::commit();
 	        return WSTReturn("编辑成功", 1);
         }catch (\Exception $e) {
+            return $e->getMessage();
             Db::rollback();
             return WSTReturn('编辑失败',-1);
         }
@@ -838,20 +831,5 @@ class Shops extends Base{
 		}
 		return WSTReturn("",-1);
 	}
-
-    /**
-     * 判断密码是否修改
-     *
-     * @param $pwd
-     * @param $oldPwd
-     * @return bool
-     */
-    public function isChangePwd($pwd, $oldPwd)
-    {
-        if (trim($pwd) === $oldPwd || md5(trim($pwd)) === $oldPwd) {
-            return false;
-        }
-        return true;
-    }
 	
 }
