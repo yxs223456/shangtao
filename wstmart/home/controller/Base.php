@@ -69,6 +69,17 @@ class Base extends Controller {
         	}
         }
     }
+    protected function checkShopAdminAuth(){
+        $USER = session('WST_SHOP_ADMIN');
+        if(empty($USER)){
+            if(request()->isAjax()){
+                die('{"status":-999,"msg":"您还未登录"}');
+            }else{
+                $this->redirect('shop-login');
+                exit;
+            }
+        }
+    }
     //登录验证方法--商家
     protected function checkShopAuth(){
        	$USER = session('WST_USER');

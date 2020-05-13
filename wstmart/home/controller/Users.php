@@ -1,5 +1,6 @@
 <?php
 namespace wstmart\home\controller;
+use wstmart\common\model\ShopAdminModel;
 use wstmart\common\model\Users as MUsers;
 use wstmart\common\model\LogSms;
 /**
@@ -17,7 +18,7 @@ use wstmart\common\model\LogSms;
  */
 class Users extends Base{
     protected $beforeActionList = [
-          'checkAuth' =>  ['except'=>'getverify,login,logout,regist,toregist,checklogin,getphoneverifycode,checkloginkey,checkemail,checkfindkey,protocol,forgetpass,forgetpasst,resetpass,forgetpasss,forgetpassf,findpass,getfindphone,checkfindphone,getfindemail,tologinbox']
+          'checkAuth' =>  ['except'=>'getverify,login,logout,regist,toregist,toshopadminregist,checklogin,getphoneverifycode,checkloginkey,checkemail,checkfindkey,protocol,forgetpass,forgetpasst,resetpass,forgetpasss,forgetpassf,findpass,getfindphone,checkfindphone,getfindemail,tologinbox']
     ];
 	/**
      * 去登录
@@ -99,6 +100,8 @@ class Users extends Base{
 		}
 		$m = new MUsers();
 		$rs = $m->checkUserPhone($userPhone,(int)session('WST_USER.userId'));
+//		$shopModel = new ShopAdminModel();
+//        $rs = $shopModel->checkUserPhone($userPhone);
 		if($rs["status"]!=1){
 			return WSTReturn("手机号已存在!");
 			exit();

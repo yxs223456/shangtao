@@ -11,7 +11,7 @@ function login(typ){
         params.loginPwd = rsa.encrypt(params.loginPwd);
     }
 	var ll = WST.load({msg:'正在处理数据，请稍后...'});
-	$.post(WST.U('home/users/checkLogin'),params,function(data,textStatus){
+	$.post(WST.U('home/shops/checklogin'),params,function(data,textStatus){
 		var json = WST.toJson(data);
 		if(json.status=='1'){
 			WST.msg(json.msg, {icon: 1});
@@ -20,7 +20,7 @@ function login(typ){
         		location.href = url;
         	}else{
     			if(typ==2){
-                	location.href=WST.U('home/shops/index');
+                	location.href=json.url;
     			}else if(typ==1){
                 	location.href=WST.U('home/users/index');	
     			}else{
@@ -188,6 +188,7 @@ function initRegist(){
 	            params.reUserPwd = rsa.encrypt(params.reUserPwd);
 	        }
 	        $("#reg_butt").css('color', '#999').text('正在提交..');
+	        // $.post(WST.U('home/shops/toShopAdminRegist'),params,function(data,textStatus){
 	        $.post(WST.U('home/users/toRegist'),params,function(data,textStatus){
 	    		var json = WST.toJson(data);
 	    		if(json.status>0){
@@ -196,7 +197,7 @@ function initRegist(){
 	                	if(WST.blank(url)){
 	                		location.href = url;
 	                	}else{
-	                		location.href=WST.U('home/users/index');
+	                		location.href=WST.U('register.html');
 	                	}
 	       			});
 	    		}else{

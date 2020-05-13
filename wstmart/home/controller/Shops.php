@@ -1,5 +1,6 @@
 <?php
 namespace wstmart\home\controller;
+use wstmart\common\model\ShopAdminModel;
 use wstmart\home\model\Goods;
 use wstmart\common\model\GoodsCats;
 use wstmart\home\validate\Shops as Validate;
@@ -21,7 +22,8 @@ use think\Loader;
 class Shops extends Base{
     protected $beforeActionList = [
           'checkShopAuth' =>  ['only'=>'editinfo,getshopmoney'],
-          'checkAuth'=>['only'=>'join,joinstep1,joinstep2,savestep2,joinstep3,savestep3,joinstep4,savestep4,joinstep5,savestep5,joinsuccess']
+          'checkAuth'=>['only'=>''],
+          'checkShopAdminAuth'=>['only'=>'join,joinstep1,joinstep2,savestep2,joinstep3,savestep3,joinstep4,savestep4,joinstep5,savestep5,joinsuccess'],
     ];
     /**
     * 店铺公告页
@@ -38,14 +40,52 @@ class Shops extends Base{
         $s = model('shops');
         return $s->editNotice();
     }
+
+    public function toShopAdminRegist()
+    {
+        $m = new ShopAdminModel();
+        $rs = $m->regist();
+        if (isset($rs["status"]) && $rs["status"] == 1) {
+            $rs['url'] = config("web.self_domain") . "/shop-login.html";
+        } else {
+            $rs['url'] = session('WST_HO_CURRENTURL');
+        }
+
+        return $rs;
+    }
+
+    public function checklogin(){
+        $m = new ShopAdminModel();
+        $rs = $m->checkLogin();
+        if (isset($rs["status"]) && $rs["status"] == -2) {
+            $rs["status"] = 1;
+            $rs['url'] = config("web.self_domain") . "/home/shops/checkapplystatus.html";
+        } else if (isset($rs["status"]) && $rs["status"] == -3) {
+            $rs["status"] = 1;
+            $rs['url'] = config("web.self_domain") . "/home/shops/checkapplystatus.html";
+        } else if (isset($rs["status"]) && $rs["status"] == 1) {
+            $rs['url'] = session('WST_HO_CURRENTURL');
+        } else {
+            $rs['url'] = session('WST_HO_CURRENTURL');
+        }
+        return $rs;
+    }
+
 	/**
 	 * 商家登录
 	 */
 	public function login(){
-		$USER = session('WST_USER');
-		if(!empty($USER) && isset($USER['shopId'])){
-			$this->redirect("shops/index");
-		}
+//		$USER = session('WST_USER');
+//        if(!empty($USER) && isset($USER['shopId'])){
+//            $this->redirect("shops/index");
+//        }
+//        $loginName = cookie("loginName");
+//        if(!empty($loginName)){
+//            $this->assign('loginName',cookie("loginName"));
+//        }else{
+//            $this->assign('loginName','');
+//        }
+//        return $this->fetch('shop_login');
 		$loginName = cookie("loginName");
 		if(!empty($loginName)){
 			$this->assign('loginName',cookie("loginName"));
@@ -242,7 +282,7 @@ class Shops extends Base{
         if(!$validate->check($data,[],'applyStep1')){
             return WSTReturn($validate->getError());
         }else{
-            return model('shops')->saveStep2($data);
+            return (new \wstmart\home\model\Shops())->saveStep2($data);
         }
     }
     public function joinStep3(){
@@ -254,7 +294,7 @@ class Shops extends Base{
         session('apply_step',3);
         $areas = model('Areas')->listQuery();
         $this->assign('areaList',$areas);
-        $apply = model('shops')->getShopApply();
+        $apply = (new \wstmart\home\model\Shops())->getShopApply();
         $this->assign('apply',$apply);
         return $this->fetch('shop_join_step3');
     }
@@ -268,7 +308,7 @@ class Shops extends Base{
         if(!$validate->check($data,[],'applyStep2')){
             return WSTReturn($validate->getError());
         }else{
-            return model('shops')->saveStep3($data);
+            return (new \wstmart\home\model\Shops())->saveStep3($data);
         }
     }
     public function joinStep4(){
@@ -339,7 +379,8 @@ class Shops extends Base{
      * 入驻进度查询
      */
     public function checkapplystatus(){
-        $apply = model('shops')->getShopApply();
+        $model = new \wstmart\home\model\Shops();
+        $apply = $model->getShopApply();
         if(empty($apply)){
             $this->redirect(Url('home/shops/joinStep1'));
             exit();

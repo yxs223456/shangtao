@@ -49,10 +49,10 @@
 				<span id="mobileCodeTips"></span>
 			</td>
 		</tr>
-		<tr class="wst-login-tr">
+		<tr class="wst-login-tr" style="display: none">
 			<td colspan="2" style="padding-left:180px;">
 				<label>
-					<input id="protocol" name="protocol" type="checkbox" class="wst_ipt" value="1" data-rule="checked" data-msg="请同意后才能注册"/>我已阅读并同意
+					<input id="protocol" name="protocol" type="checkbox" checked="checked" class="wst_ipt" value="1" data-rule="checked" data-msg="请同意后才能注册"/>我已阅读并同意
 	           		<a href="javascript:;" style="color:#69b7b5;" id="protocolInfo" onclick="showProtocol();">《用户注册协议》</a>
 	           	</label>                                  
 			</td>
@@ -70,39 +70,12 @@
 </div>
 <div class="wst-footer">
 		<div class="wst-container">
-		<div class="wst-footer-hp-ck3">
-	        <div class="links">
-	           {php}$navs = WSTNavigations(1);{/php}
-	           {volist name="$navs" id='vo'}
-	           <a href="{$vo['navUrl']}" {if $vo['isOpen']==1}target="_blank"{/if}>{$vo['navTitle']}</a>
-	           {if $i< count($navs)}&nbsp;&nbsp;|&nbsp;&nbsp;{/if}
-	           {/volist}
-	        </div>
-	        <div class="copyright">
-	        {php}
-	        	if(WSTConf('CONF.mallFooter')!=''){
-	         		echo htmlspecialchars_decode(WSTConf('CONF.mallFooter'));
-	        	}
-	        {/php}
-	      	{php}
-				if(WSTConf('CONF.visitStatistics')!=''){
-					echo htmlspecialchars_decode(WSTConf('CONF.visitStatistics'))."<br/>";
-			    }
-			{/php}
-	        {if condition="WSTConf('CONF.mallLicense') eq ''"}
-	        <div>
-				Copyright©2016 Powered By <a target="_blank" href="http://www.wstmart.net">WSTMart</a>
-			</div>
-			{else/}
-				<div id="wst-mallLicense" data='1' style="display:none;">Copyright©2016 Powered By <a target="_blank" href="http://www.wstmart.net">WSTMart</a></div>
-	        {/if}
-	        </div>
-	    </div>
+
 	    </div>
 	  </div>
 {/block}
 {block name="js"}
 	<script type="text/javascript" src="__STATIC__/plugins/validator/jquery.validator.min.js?v={$v}"></script>
-	<script type='text/javascript' src='__STYLE__/js/login.js?v={$v}'></script>
+	<script type='text/javascript' src='__STYLE__/js/login.js'></script>
 	<Script>$(function(){initRegist();})</Script>
 {/block}

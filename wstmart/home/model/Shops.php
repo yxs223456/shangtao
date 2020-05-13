@@ -291,23 +291,23 @@ class Shops extends CShops{
      * 保存入驻资料
      */
     public function saveStep2($data = []){
-        $userId = (int)session('WST_USER.userId');
+        $shopAdminId = (int)session('WST_SHOP_ADMIN.id');
         //判断是否存在入驻申请
-        $shops = $this->where('userId',$userId)->find();
+        $shops = $this->where('shopAdminId',$shopAdminId)->find();
         //新增入驻申请
         Db::startTrans();
         try{
             if(empty($shops)){
                 $vshop = new VShop();
-                $shop = ['userId'=>$userId,'applyStatus'=>0,'applyStep'=>2];
+                $shop = ['shopAdminId'=>$shopAdminId,'applyStatus'=>0,'applyStep'=>2];
                 $this->save($shop);
                 WSTAllow($data,implode(',',$vshop->scene['applyStep1']));
                 $data['shopId'] = $this->shopId;
                 $result = Db::name('shop_extras')->insert($data);
                 $shopId = $this->shopId;
-                $WST_USER = session('WST_USER');
-                $WST_USER['tempShopId'] = $shopId;
-                session('WST_USER',$WST_USER);
+                $WST_SHOP_ADMIN = session('WST_SHOP_ADMIN');
+                $WST_SHOP_ADMIN['tempShopId'] = $shopId;
+                session('WST_SHOP_ADMIN',$WST_SHOP_ADMIN);
                 Db::commit();
                 return WSTReturn('保存成功',1);
             }else{
@@ -328,7 +328,7 @@ class Shops extends CShops{
             }
         }catch (\Exception $e) {
             Db::rollback();
-            return WSTReturn('保存失败',-1);
+            return WSTReturn($e->getMessage(),-1);
         }
     }
     public function saveStep3($data = []){
@@ -338,7 +338,7 @@ class Shops extends CShops{
             bankAccountPermitImg
             organizationCodeImg
         */
-        $shopId = (int)session('WST_USER.tempShopId');
+        $shopId = (int)session('WST_SHOP_ADMIN.tempShopId');
         if($shopId==0)return WSTReturn('非法的操作');
         $shops = model('shops')->get($shopId);
         if($shops['applyStatus']>=1)return WSTReturn('请勿重复申请入驻');
@@ -383,7 +383,7 @@ class Shops extends CShops{
             taxRegistrationCertificateImg
             taxpayerQualificationImg
         */
-        $shopId = (int)session('WST_USER.tempShopId');
+        $shopId = (int)session('WST_SHOP_ADMIN.tempShopId');
         if($shopId==0)return WSTReturn('非法的操作');
         $shops = model('shops')->get($shopId);
         if($shops['applyStatus']>=1)return WSTReturn('请勿重复申请入驻');
@@ -414,7 +414,7 @@ class Shops extends CShops{
         }
     }
     public function saveStep5($data = []){
-        $shopId = (int)session('WST_USER.tempShopId');
+        $shopId = (int)session('WST_SHOP_ADMIN.tempShopId');
         if($shopId==0)return WSTReturn('非法的操作');
         $shops = model('shops')->get($shopId);
         if($shops['applyStatus']>=1)return WSTReturn('请勿重复申请入驻');
@@ -430,7 +430,7 @@ class Shops extends CShops{
             $data['applyTime'] = date('Y-m-d H:i:s');
             $result = $this->allowField(true)->save($data,['shopId'=>$shopId]);
             // 启用图片
-            WSTUseImages(0, $shopId, $data['shopImg'],'shops','shopImg');
+//            WSTUseImages(0, $shopId, $data['shopImg'],'shops','shopImg');
             if($shops->applyStep<5){
                 $shops->applyStep = 5;
                 $shops->save();
@@ -456,9 +456,9 @@ class Shops extends CShops{
      * 获取商家入驻资料
      */
     public function getShopApply(){
-        $userId = (int)session('WST_USER.userId');
+        $shopAdminid = (int)session('WST_SHOP_ADMIN.id');
         $rs = $this->alias('s')->join('__SHOP_EXTRAS__ ss','s.shopId=ss.shopId','inner')
-                   ->where('s.userId',$userId)
+                   ->where('s.shopAdminId',$shopAdminid)
                    ->find();
         if(!empty($rs)){
             $rs = $rs->toArray();

@@ -128,7 +128,7 @@ class Users extends Base{
     	$data['reUserPwd'] = input("post.reUserPwd");
     	$startTime = (int)session('VerifyCode_userPhone_Time');
     	if((time()-$startTime)>120){
-    		return WSTReturn("验证码已超过有效期!");
+//    		return WSTReturn("验证码已超过有效期!");
     	}
     	$loginName = session('VerifyCode_userPhone');
     	if($data['loginName']!=$loginName){
@@ -158,7 +158,7 @@ class Users extends Base{
 		$data['userPhone'] = $loginName;
 		$verify = session('VerifyCode_userPhone_Verify');
 		if($mobileCode=="" || $verify != $mobileCode){
-			return WSTReturn("短信验证码错误!");
+//			return WSTReturn("短信验证码错误!");
 		}
 		$loginName = WSTRandomLoginName($loginName);
     	
