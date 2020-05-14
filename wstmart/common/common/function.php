@@ -410,6 +410,7 @@ function WSTUploadPic($fromType=0){
             \wstmart\common\helper\AliyunOss::putObject($thumbSrc, $thumbContent);
         }
         $ossDomain = str_replace($filename,'',$fileUrl['url']);
+        unlink(\think\facade\Env::get('root_path') . $filePath . '/' . $filename);
         //图片记录
 //        WSTRecordImages($ossDomain . $filename, (int)$fromType);
         return json_encode(['status'=>1,'savePath'=>$ossDomain,'name'=>$filename,'thumb'=>$thumbSrc]);
@@ -936,11 +937,12 @@ function WSTEditUpload($fromType){
     	$filePath = $info->getPathname();
     	$filePath = str_replace(Env::get('root_path'),'',$filePath);
     	$filePath = str_replace('\\','/',$filePath);
-    	$name = $info->getFilename();
-    	$imageSrc = trim($filePath,'/');
-    	//图片记录
-    	WSTRecordImages($imageSrc, (int)$fromType);
-    	return json_encode(array('error' => 0, 'url' => $root.$filePath));
+
+        $filename = $info->getFilename();
+        $fileContent = file_get_contents(\think\facade\Env::get('root_path') . $filePath . '/' . $filename);
+        $fileUrl = \wstmart\common\helper\AliyunOss::putObject($filename, $fileContent);
+        unlink(\think\facade\Env::get('root_path') . $filePath . '/' . $filename);
+    	return json_encode(array('error' => 0, 'url' => $fileUrl));
 	}
 }
 /**
