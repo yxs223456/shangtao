@@ -939,9 +939,9 @@ function WSTEditUpload($fromType){
     	$filePath = str_replace('\\','/',$filePath);
 
         $filename = $info->getFilename();
-        $fileContent = file_get_contents(\think\facade\Env::get('root_path') . $filePath . '/' . $filename);
+        $fileContent = file_get_contents(\think\facade\Env::get('root_path') . $filePath);
         $fileUrl = \wstmart\common\helper\AliyunOss::putObject($filename, $fileContent);
-        unlink(\think\facade\Env::get('root_path') . $filePath . '/' . $filename);
+        unlink(\think\facade\Env::get('root_path') . $filePath);
     	return json_encode(array('error' => 0, 'url' => $fileUrl));
 	}
 }
