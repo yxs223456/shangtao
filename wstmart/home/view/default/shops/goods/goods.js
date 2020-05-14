@@ -241,7 +241,7 @@ function addSpecImg(opts){
                 '<input type="text" id="specName_'+opts.catId+'_'+specNum+'" maxLength="50" value="'+WST.blank(opts.val)+'" onblur="batchChangeTxt(this.value,'+opts.catId+','+specNum+')"/>',
                 '</td>',
 	            '<td id="uploadMsg_'+opts.catId+'_'+specNum+'">',
-	            (opts.specImg)?'<img height="25"  width="25" id="specImg_'+opts.catId+'_'+specNum+'" src="'+WST.conf.ROOT+"/"+opts.specImg+'" v="'+opts.specImg+'"/>':"",
+	            (opts.specImg)?'<img height="25"  width="25" id="specImg_'+opts.catId+'_'+specNum+'" src="'+opts.specImg+'" v="'+opts.specImg+'"/>':"",
 	            '</td><td><div id="specImgPicker_'+specNum+'" class="j-specImg">上传图片</div></td>'
 	         );
 	if($('#specTby').children().size()==0){
@@ -260,8 +260,8 @@ function addSpecImg(opts){
 	  	  callback:function(f){
 	  		  var json = WST.toJson(f);
 	  		  if(json.status==1){
-	  			$('#uploadMsg_'+this.cat+"_"+this.num).html('<img id="specImg_'+this.cat+"_"+this.num+'" v="'+json.savePath+json.thumb+'" src="'+WST.conf.ROOT+"/"+json.savePath+json.thumb+'" height="25"  width="25"/>');
-	  		  }
+				  $('#uploadMsg_'+this.cat+"_"+this.num).html('<img id="specImg_'+this.cat+"_"+this.num+'" v="'+json.savePath+json.thumb+'" src="'+json.savePath+json.thumb+'" height="25"  width="25"/>');
+	  			}
 		  },
 		  progress:function(rate){
 		      $('#uploadMsg_'+this.cat+"_"+this.num).html('已上传'+rate+"%");
