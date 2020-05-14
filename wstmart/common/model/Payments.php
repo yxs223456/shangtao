@@ -33,19 +33,28 @@ class Payments extends Base{
 		return $payments;
 	}
 
-	
+
 	/**
 	 * 获取支付信息
 	 */
-	public function getPayment($payCode){
-		$payment = $this->where("enabled=1 AND payCode='$payCode' AND isOnline=1")->find();
-		$payConfig = json_decode($payment["payConfig"]) ;
-		foreach ($payConfig as $key => $value) {
-			$payment[$key] = $value;
-		}
-		return $payment;
-	}
-	
+//	public function getPayment($payCode){
+//		$payment = $this->where("enabled=1 AND payCode='$payCode' AND isOnline=1")->find();
+//		$payConfig = json_decode($payment["payConfig"]) ;
+//		foreach ($payConfig as $key => $value) {
+//			$payment[$key] = $value;
+//		}
+//		return $payment;
+//	}
+
+    public function getPayment($payCode){
+        $payment = $this->where("enabled=1 AND payCode='$payCode' AND isOnline=1")->find();
+        $payConfig = config("payment." . strtolower($payCode));
+        foreach ($payConfig as $key => $value) {
+            $payment[$key] = $value;
+        }
+        return $payment;
+    }
+
 	/**
 	 * 获取在线支付方式
 	 */
@@ -60,7 +69,7 @@ class Payments extends Base{
         //获取支付信息
 		return $this->where(['isOnline'=>1,'enabled'=>1,'payCode'=>$payCode])->Count();
 	}
-	
+
 	public function recharePayments($payfor = ''){
 		$rs = $this->where(['isOnline'=>1,'enabled'=>1])->where("find_in_set ($payfor,payFor)")->where("payCode!='wallets'")
 			->field('id,payCode,payName,isOnline')->order('payOrder asc')->select();

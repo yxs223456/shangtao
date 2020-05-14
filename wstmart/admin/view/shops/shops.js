@@ -3,7 +3,7 @@ function initGrid(){
     var h = WST.pageHeight();
     var cols = [
             {title:'店铺编号', name:'shopSn', width: 30,sortable: true},
-            {title:'店铺账号', name:'loginName',width: 60,sortable: true},
+            {title:'店铺账号', name:'userPhone',width: 60,sortable: true},
             {title:'店铺名称', name:'shopName',width: 120,sortable: true},
             {title:'店主姓名', name:'shopkeeper',width: 40,hidden: true,sortable: true},
             {title:'店主联系电话', name:'telephone',width: 30,hidden: true,sortable: true},
@@ -40,7 +40,7 @@ function loadGrid(){
 function initApplyGrid(){
     var h = WST.pageHeight();
     var cols = [
-            {title:'申请人账号', name:'loginName', width: 30},
+            {title:'申请人账号', name:'userPhone', width: 30},
             {title:'店铺名称', name:'shopName',width:100 },
             {title:'所属公司', name:'shopCompany',width:100 },
             {title:'申请联系人', name:'applyLinkMan',width:30 },
@@ -102,7 +102,7 @@ function initStopGrid(){
     var h = WST.pageHeight();
     var cols = [
             {title:'店铺编号', name:'shopSn', width: 30},
-            {title:'店铺账号', name:'loginName', width: 60},
+            {title:'店铺账号', name:'userPhone', width: 60},
             {title:'店铺名称', name:'shopName',width: 120},
             {title:'店主姓名', name:'shopkeeper',width: 40,hidden: true},
             {title:'店主联系电话', name:'telephone',hidden: true},
@@ -422,7 +422,7 @@ function getUserByKey(){
 		layer.close(loading);
 		var json = WST.toAdminJson(data);
 		if(json.status=='1'){
-		    $('#keyNameBox').html('用户：'+json.data.loginName);
+		    $('#keyNameBox').html('用户：'+json.data.userPhone);
 		    $('#shopUserId').val(json.data.userId);
 		}else{
 		    WST.msg(json.msg,{icon:2});

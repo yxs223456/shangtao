@@ -5,6 +5,16 @@
        <th width='150'>店铺编号<font color='red'>*</font>：</th>
        <td><input type="text" id='shopSn' name='shopSn' class='ipt' value="{$object['shopSn']}" maxLength='20' data-rule="店铺编号:{if $object['shopId']>0}required;length[1~20];{else /}ignoreBlank;{/if}remote(post:{:url('admin/shops/checkShopSn',array('shopId'=>$object['shopId']))})" data-target="#msg_shopSn"/><span class='msg-box' id='msg_shopSn'>{if $object['shopId']==0}(为空则自动生成'S000000001'类型号码){/if}</span></td>
     </tr>
+    <tr class='newUserTr1'>
+        <th width='150'>登录账号<font color='red'>*</font>：</th>
+        <td><input type="text" id='userPhone' name='userPhone' class='ipt' value="{$object['userPhone']}" maxLength='20' data-rule="登录账号: length[1~20];" onkeyup="javascript:WST.isUserName(this)"/></td>
+    </tr>
+    <tr class='newUserTr1'>
+        <th>登录密码<font color='red'>*</font>：</th>
+        <td><input type="password" id='pwd' class='ipt' maxLength='20' value="{$object['pwd']}" data-rule="登录密码: required(#isNew1:checked);length[6~50];" data-target="#msg_loginPwd"/>
+            <span class='msg-box' id='msg_loginPwd'></span>
+        </td>
+    </tr>
     <tr>
        <th width='150'>店铺名称<font color='red'>*</font>：</th>
        <td><input type="text" id='shopName' class='ipt' value="{$object['shopName']}" maxLength='20' data-rule="店铺名称: required;"/></td>

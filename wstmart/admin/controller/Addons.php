@@ -1,5 +1,6 @@
 <?php
 namespace wstmart\admin\controller;
+use think\addons\BaseModel;
 use wstmart\admin\model\Addons as M;
 /**
  * ============================================================================
@@ -63,11 +64,13 @@ class Addons extends Base{
     	$data = new $addon_class;
     	$addon['addons_path'] = $data->addons_path;
     	$this->meta_title   =   '设置插件-'.$data->info['title'];
-    	$db_config = $addon['config'];
+//    	$db_config = $addon['config'];
+        $addonModel = new BaseModel();
+    	$db_config = $addonModel->getConf($addon["name"]);
     	$addon['config'] = include $data->config_file;
    
     	if($db_config){
-    		$db_config = json_decode($db_config, true);
+//    		$db_config = json_decode($db_config, true);
     		foreach ($addon['config'] as $key => $value) {
     			if($value['type'] != 'group'){
     				$addon['config'][$key]['value'] = isset($db_config[$key])?$db_config[$key]:"";

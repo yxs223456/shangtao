@@ -13,33 +13,33 @@
 <fieldset class="layui-elem-field layui-field-title">
 <legend>基础信息</legend>
 <table class='wst-form wst-box-top'>
-  <tr>
-     <th width='150'>新增类型<font color='red'>*</font>：</th>
-     <td class='layui-form'>
-       <label>
-             <input type='radio' class='ipt' name='isNew' id='isNew1' value='1' onclick='javascript:WST.showHide(1,".newUserTr1");WST.showHide(0,"#newUserTr0")' checked title='新账号'>
-       </label>
-       <label>
-             <input type='radio' class='ipt' name='isNew' value='0' onclick='javascript:WST.showHide(0,".newUserTr1");WST.showHide(1,"#newUserTr0")' title='已有账号'>
-       </label>
-     </td>
-  </tr>
-  <tr id='newUserTr0' style='display:none'>
-     <th width='150' valign="top">请输入用户账号<font color='red'>*</font>：</th>
-     <td>
-     <input type="text" id='keyName' name='keyName' class='ipt' placeholder='请输入用户账号/手机'/>
-     <input type='button' value='查询' class='btn btn-primary' onclick='javascript:getUserByKey()'>
-     <div id='keyNameBox' style='height:30px;line-height:30px'></div>
-     <input type='hidden' class='ipt' id='shopUserId' value='0'/>
-     </td>
-  </tr>
+  <!--<tr>-->
+     <!--<th width='150'>新增类型<font color='red'>*</font>：</th>-->
+     <!--<td class='layui-form'>-->
+       <!--<label>-->
+             <!--<input type='radio' class='ipt' name='isNew' id='isNew1' value='1' onclick='javascript:WST.showHide(1,".newUserTr1");WST.showHide(0,"#newUserTr0")' checked title='新账号'>-->
+       <!--</label>-->
+       <!--<label>-->
+             <!--<input type='radio' class='ipt' name='isNew' value='0' onclick='javascript:WST.showHide(0,".newUserTr1");WST.showHide(1,"#newUserTr0")' title='已有账号'>-->
+       <!--</label>-->
+     <!--</td>-->
+  <!--</tr>-->
+  <!--<tr id='newUserTr0' style='display:none'>-->
+     <!--<th width='150' valign="top">请输入用户账号<font color='red'>*</font>：</th>-->
+     <!--<td>-->
+     <!--<input type="text" id='keyName' name='keyName' class='ipt' placeholder='请输入用户账号/手机'/>-->
+     <!--<input type='button' value='查询' class='btn btn-primary' onclick='javascript:getUserByKey()'>-->
+     <!--<div id='keyNameBox' style='height:30px;line-height:30px'></div>-->
+     <!--<input type='hidden' class='ipt' id='shopUserId' value='0'/>-->
+     <!--</td>-->
+  <!--</tr>-->
   <tr class='newUserTr1'>
      <th width='150'>登录账号<font color='red'>*</font>：</th>
-     <td><input type="text" id='loginName' name='loginName' class='ipt' value=" " maxLength='20' data-rule="登录账号: required(#isNew1:checked);length[6~20];remote(post:{:url('admin/users/checkLoginKey')})" onkeyup="javascript:WST.isChinese(this,1)"/></td>
+     <td><input type="text" id='userPhone' name='userPhone' class='ipt' value="" maxLength='20' data-rule="登录账号: length[1~20];" onkeyup="javascript:WST.isUserName(this)"/></td>
   </tr>
   <tr class='newUserTr1'>
      <th>登录密码<font color='red'>*</font>：</th>
-     <td><input type="password" id='loginPwd' class='ipt' maxLength='20' value='88888888' data-rule="登录密码: required(#isNew1:checked);length[6~20];" data-target="#msg_loginPwd"/>
+     <td><input type="password" id='pwd' class='ipt' maxLength='20' value='88888888' data-rule="登录密码: required(#isNew1:checked);length[6~20];" data-target="#msg_loginPwd"/>
      <span class='msg-box' id='msg_loginPwd'>(默认为88888888)</span>
      </td>
   </tr>

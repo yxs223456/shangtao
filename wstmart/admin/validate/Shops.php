@@ -16,8 +16,10 @@ use think\Validate;
  */
 class Shops extends Validate{
 	protected $rule = [
-	    'shopSn' => 'checkShopSn:1|max:40',
-	    'shopName' => 'require|max:40',
+        'shopSn' => 'checkShopSn:1|max:40',
+        'userPhone' => 'require|checkUnique:1|mobile|max:20',
+        'pwd' => 'require|max:50',
+        'shopName' => 'require|max:40',
         'shopCompany' => 'require|max:300',
         'shopTel' => 'require|max:40',
         'longitude' => 'checkLocation',
@@ -43,6 +45,12 @@ class Shops extends Validate{
     protected $message = [
         'shopSn.checkShopSn' => '请输入店铺编号',
         'shopSn.max' => '店铺编号不能超过20个字符',
+        'userPhone.require' => '请输入店铺登陆账号',
+        'userPhone.checkUnique' => '请输入店铺登陆账号',
+        'userPhone.mobile' => '店铺登陆名称必须是手机号',
+        'userPhone.max' => '店铺登陆名称不能超过20个字符',
+        'pwd.require' => '请输入店铺登陆密码',
+        'pwd.max' => '店铺密码不能超过50个字符',
         'shopName.require' => '请输入店铺名称',
         'shopName.max' => '店铺名称不能超过20个字符',
         'shopCompany.require' => '请输入公司名称',
@@ -73,9 +81,11 @@ class Shops extends Validate{
     ];
     
     protected $scene = [
-        'add'   =>  ['shopSn','shopName','shopCompany','longitude','latitude','shopkeeper','telephone','shopCompany','shopTel','isSelf','shopImg',
+        'add'   =>  ['shopSn','userPhone','pwd','shopName','shopCompany','longitude','latitude','shopkeeper','telephone','shopCompany','shopTel','isSelf','shopImg',
                      'areaId','shopAddress','isInvoice','shopAtive','bankId','bankAreaId','bankNo','bankUserName','shopAtive'],
-        'edit'  =>  ['shopSn','shopName','shopCompany','shopkeeper','telephone','shopCompany','shopTel','isSelf','shopImg',
+        'edit'  =>  ['shopSn','userPhone','pwd','shopName','shopCompany','shopkeeper','telephone','shopCompany','shopTel','isSelf','shopImg',
+                     'areaId','shopAddress','isInvoice','shopAtive','bankId','bankAreaId','bankNo','bankUserName','shopAtive'],
+        'handleApply'  =>  ['shopSn','userPhone','shopName','shopCompany','shopkeeper','telephone','shopCompany','shopTel','isSelf','shopImg',
                      'areaId','shopAddress','isInvoice','shopAtive','bankId','bankAreaId','bankNo','bankUserName','shopAtive']
     ]; 
     
@@ -111,5 +121,14 @@ class Shops extends Validate{
             return ($longitude==0 ||  $latitude==0 || $mapLevel==0)?'请选择经纬度':true;
         }
 
+    }
+
+    protected function checkUnique($value) {
+        $loginName = input('post.userPhone', "");
+        $shopId = input('post.shopId/d', 0);
+        if (empty($loginName)) return false;
+        $isChk = model('ShopAdmin')->checkLoginName($loginName, $shopId);
+        if ($isChk) return '对不起，该店铺登陆名称已存在';
+        return true;
     }
 }

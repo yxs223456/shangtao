@@ -20,11 +20,12 @@ class LogSms extends Base{
 	/**
 	 * 写入并发送短讯记录
 	 */
-	public function sendSMS($smsSrc,$userId,$phoneNumber,$params,$smsFunc){
+	public function sendSMS($smsSrc,$objectId,$phoneNumber,$params,$smsFunc,$objectType = 0){
 		if((int)WSTConf('CONF.smsOpen')==0)return WSTReturn('未开启短信接口');
 		$data = [];
 		$data['smsSrc'] = $smsSrc;
-		$data['smsUserId'] = $userId;
+		$data['smsUserId'] = $objectId;
+		$data['objectType'] = $objectType;
 		$data['smsPhoneNumber'] = $phoneNumber;
 		$data['smsContent'] = 'N/A';
 		$data['smsReturnCode'] = '';

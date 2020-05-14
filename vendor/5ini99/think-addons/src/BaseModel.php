@@ -12,11 +12,20 @@ class BaseModel extends \think\Model{
 	/**
 	 * 获取插件配置内容
 	 */
-	public function getConf($addonsName){
+//	public function getConf($addonsName){
+//		$data = cache('ADDONS_'.$addonsName);
+//		if(!$data){
+//			$rs = Db::name('addons')->where('name',$addonsName)->field('config')->find();
+//		    $data =  json_decode($rs['config'],true);
+//		    cache('ADDONS_'.$addonsName,$data,31622400);
+//		}
+//		return $data;
+//	}
+
+    public function getConf($addonsName){
 		$data = cache('ADDONS_'.$addonsName);
 		if(!$data){
-			$rs = Db::name('addons')->where('name',$addonsName)->field('config')->find();
-		    $data =  json_decode($rs['config'],true);
+		    $data =  config("addon.".strtolower($addonsName));
 		    cache('ADDONS_'.$addonsName,$data,31622400);
 		}
 		return $data;
@@ -26,6 +35,7 @@ class BaseModel extends \think\Model{
 		$rs = Db::name('addons')->where('name',$addonsName)->field('status')->find();
 		return (int)$rs["status"];
 	}
+
 	/**
 	 * 获取空模型
 	 */

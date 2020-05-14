@@ -38,10 +38,10 @@ class Shops extends Base{
 			$order = $sortArr[0].' '.$sortArr[1];
 		}
 		return Db::table('__SHOPS__')->alias('s')->join('__AREAS__ a2','s.areaId=a2.areaId','left')
-			       ->join('__USERS__ u','u.userId=s.userId','left')
+			       ->join('__SHOP_ADMIN__ u','u.id=s.shopAdminId','left')
 			       ->join('__SHOP_EXTRAS__ ss','s.shopId=ss.shopId','left')
 			       ->where($where)
-			       ->field('u.loginName,s.shopId,shopSn,shopName,a2.areaName,shopkeeper,telephone,shopAddress,shopCompany,shopAtive,shopStatus')
+			       ->field('u.userPhone,s.shopId,shopSn,shopName,a2.areaName,shopkeeper,telephone,shopAddress,shopCompany,shopAtive,shopStatus')
 			       ->order($order)
 			       ->paginate(input('limit/d'));
 	}
@@ -62,9 +62,9 @@ class Shops extends Base{
 		if($areaIdPath !='')$where[] = ['areaIdPath','like',$areaIdPath."%"];
 		return Db::table('__SHOPS__')->alias('s')->join('__AREAS__ a2','s.areaId=a2.areaId','left')
 		       ->join('__SHOP_EXTRAS__ ss','s.shopId=ss.shopId','left')
-		       ->join('__USERS__ u','u.userId=s.userId','left')
+		       ->join('__SHOP_ADMIN__ u','u.id=s.shopAdminId','left')
 		       ->where($where)
-		       ->field('u.loginName,s.shopId,applyLinkMan,applyLinkTel,investmentStaff,isInvestment,shopName,a2.areaName,shopAddress,shopCompany,applyTime,applyStatus')
+		       ->field('u.userPhone,s.shopId,applyLinkMan,applyLinkTel,investmentStaff,isInvestment,shopName,a2.areaName,shopAddress,shopCompany,applyTime,applyStatus')
 		       ->order('s.shopId desc')->paginate(input('limit/d'));
 	}
 
@@ -138,7 +138,7 @@ class Shops extends Base{
      */
     public function getShopApply($id){
         $shop = $this->alias('s')->join('__SHOP_EXTRAS__ ss','s.shopId=ss.shopId','inner')
-                   ->join('__USERS__ u','u.userId=s.userId','inner')
+                   ->join('__SHOP_ADMIN__ u','u.id=s.shopAdminId','inner')
                    ->where('s.shopId',$id)
                    ->find()
                    ->toArray();
@@ -156,6 +156,7 @@ class Shops extends Base{
 	 */
 	public function getById($id){
 		$shop = $this->alias('s')->join('__SHOP_EXTRAS__ ss','s.shopId=ss.shopId','inner')
+                   ->join('__SHOP_ADMIN__ u','u.id=s.shopAdminId','left')
                    ->where('s.shopId',$id)
                    ->find()
                    ->toArray();
@@ -203,7 +204,7 @@ class Shops extends Base{
 		if($num==0)return false;
 		return true;
 	}
-	
+
     /**
 	 * 处理申请
 	 */
@@ -213,7 +214,7 @@ class Shops extends Base{
 		if(empty($shops))return WSTReturn('删除失败，该入驻申请不存在');
 		if($shops->applyStatus==2)return WSTReturn('该入驻申请已通过',1);
 		$validate = new Validate;
-        if(!$validate->check(Input('post.')))return WSTReturn($validate->getError());
+        if(!$validate->scene('handleApply')->check(Input('post.')))return WSTReturn($validate->getError());
         //判断经营范围
         $goodsCatIds = input('post.goodsCatIds');
         $accredIds = input('post.accredIds');
@@ -309,7 +310,7 @@ class Shops extends Base{
 				$ss['shopId'] = $shopId;
 				Db::name('shop_scores')->insert($ss);
 	        }
-	        if($shops->applyStatus!=$data['applyStatus'])$this->sendMessages($shopId,$shops->userId,$data,'handleApply');
+	        if($shops->applyStatus!=$data['applyStatus'])$this->sendMessages($shopId,$data,'handleApply');
 	        Db::commit();
 	        return WSTReturn("操作成功", 1);
         }catch (\Exception $e) {
@@ -321,71 +322,136 @@ class Shops extends Base{
 	/**
 	 * 发送信息
 	 */
-	public function sendMessages($shopId,$userId,$data,$method){
-	    $user = model('users')->get($userId);
-	    $shops = model('shops')->get($shopId);
-	    if((int)$data['applyStatus']==2){
+//	public function sendMessages($shopId,$userId,$data,$method){
+//	    $user = model('users')->get($userId);
+//	    $shops = model('shops')->get($shopId);
+//	    if((int)$data['applyStatus']==2){
+//            //如果存在手机则发送手机号码提示
+//		    $tpl = WSTMsgTemplates('PHONE_USER_SHOP_OPEN_SUCCESS');
+//		    if( $tpl['tplContent']!='' && $tpl['status']=='1' && $data['applyLinkTel']!=''){
+//		        $params = ['tpl'=>$tpl,'params'=>['MALL_NAME'=>WSTConf("CONF.mallName"),'LOGIN_NAME'=>$user->loginName]];
+//		        $rv = model('admin/LogSms')->sendSMS(0,$userId,$data['applyLinkTel'],$params,$method);
+//		    }
+//		    //发送邮件
+//		    $tpl = WSTMsgTemplates('EMAIL_USER_SHOP_OPEN_SUCCESS');
+//		    if( $tpl['tplContent']!='' && $tpl['status']=='1' && $data['applyLinkEmail']){
+//		        $find = ['${LOGIN_NAME}','${MALL_NAME}'];
+//		        $replace = [$user->loginName,WSTConf("CONF.mallName")];
+//		        $sendRs = WSTSendMail($data['applyLinkEmail'],'申请入驻审核通过',str_replace($find,$replace,$tpl['content']));
+//		    }
+//		    // 会员发送一条商城消息
+//	        $tpl = WSTMsgTemplates('SHOP_OPEN_SUCCESS');
+//		    if( $tpl['tplContent']!='' && $tpl['status']=='1'){
+//		        $find = ['${LOGIN_NAME}','${MALL_NAME}'];
+//		        $replace = [$user->loginName,WSTConf("CONF.mallName")];
+//		        WSTSendMsg($userId,str_replace($find,$replace,$tpl['tplContent']),['from'=>0,'dataId'=>$shopId]);
+//		    }
+//		    //微信消息
+//		    if((int)WSTConf('CONF.wxenabled')==1){
+//			    $params = [];
+//			    $params['SHOP_NAME'] = $shops['shopName'];
+//				$params['APPLY_TIME'] = $shops['applyTime'];
+//				$params['NOW_TIME'] = date('Y-m-d H:i:s');
+//				$params['REASON'] = "申请入驻成功";
+//				WSTWxMessage(['CODE'=>'WX_SHOP_OPEN_SUCCESS','userId'=>$userId,'params'=>$params]);
+//			}
+//	    }else{
+//	        //如果存在手机则发送手机号码提示
+//		    $tpl = WSTMsgTemplates('PHONE_SHOP_OPEN_FAIL');
+//		    if( $tpl['tplContent']!='' && $tpl['status']=='1' && $data['applyLinkTel']!=''){
+//		        $params = ['tpl'=>$tpl,'params'=>['MALL_NAME'=>WSTConf("CONF.mallName"),'REASON'=>$data['applyDesc']]];
+//		        $rv = model('admin/LogSms')->sendSMS(0,$userId,$data['applyLinkTel'],$params,$method);
+//		    }
+//		    //发送邮件
+//		    $tpl = WSTMsgTemplates('EMAIL_SHOP_OPEN_FAIL');
+//		    if( $tpl['tplContent']!='' && $tpl['status']=='1' && $data['applyLinkEmail']){
+//		        $find = ['${LOGIN_NAME}','${MALL_NAME}','${REASON}'];
+//		        $replace = [$user->loginName,WSTConf("CONF.mallName"),$data['applyDesc']];
+//		        $sendRs = WSTSendMail($data['applyLinkEmail'],'申请入驻失败',str_replace($find,$replace,$tpl['content']));
+//		    }
+//	    	// 会员发送一条商城消息
+//	    	$tpl = WSTMsgTemplates('SHOP_OPEN_FAIL');
+//		    if( $tpl['tplContent']!='' && $tpl['status']=='1'){
+//		        $find = ['${LOGIN_NAME}','${MALL_NAME}','${REASON}'];
+//		        $replace = [$user->loginName,WSTConf("CONF.mallName"),$data['applyDesc']];
+//		        WSTSendMsg($userId,str_replace($find,$replace,$tpl['tplContent']),['from'=>0,'dataId'=>$shopId]);
+//		    }
+//		    //微信消息
+//			if((int)WSTConf('CONF.wxenabled')==1){
+//				$params = [];
+//				$params['SHOP_NAME'] = $shops['shopName'];
+//				$params['APPLY_TIME'] = $shops['applyTime'];
+//				$params['NOW_TIME'] = date('Y-m-d H:i:s');
+//				$params['REASON'] = $data['applyDesc'];
+//				WSTWxMessage(['CODE'=>'WX_SHOP_OPEN_FAIL','userId'=>$userId,'params'=>$params]);
+//			}
+//	    }
+//	}
+
+    public function sendMessages($shopId,$data,$method){
+        $shops = model('shops')->get($shopId);
+        if((int)$data['applyStatus']==2){
             //如果存在手机则发送手机号码提示
-		    $tpl = WSTMsgTemplates('PHONE_USER_SHOP_OPEN_SUCCESS');
-		    if( $tpl['tplContent']!='' && $tpl['status']=='1' && $data['applyLinkTel']!=''){
-		        $params = ['tpl'=>$tpl,'params'=>['MALL_NAME'=>WSTConf("CONF.mallName"),'LOGIN_NAME'=>$user->loginName]];
-		        $rv = model('admin/LogSms')->sendSMS(0,$userId,$data['applyLinkTel'],$params,$method);
-		    }
-		    //发送邮件
-		    $tpl = WSTMsgTemplates('EMAIL_USER_SHOP_OPEN_SUCCESS');
-		    if( $tpl['tplContent']!='' && $tpl['status']=='1' && $data['applyLinkEmail']){
-		        $find = ['${LOGIN_NAME}','${MALL_NAME}'];
-		        $replace = [$user->loginName,WSTConf("CONF.mallName")];
-		        $sendRs = WSTSendMail($data['applyLinkEmail'],'申请入驻审核通过',str_replace($find,$replace,$tpl['content']));
-		    }
-		    // 会员发送一条商城消息
-	        $tpl = WSTMsgTemplates('SHOP_OPEN_SUCCESS');
-		    if( $tpl['tplContent']!='' && $tpl['status']=='1'){
-		        $find = ['${LOGIN_NAME}','${MALL_NAME}'];
-		        $replace = [$user->loginName,WSTConf("CONF.mallName")];
-		        WSTSendMsg($userId,str_replace($find,$replace,$tpl['tplContent']),['from'=>0,'dataId'=>$shopId]);
-		    }
-		    //微信消息
-		    if((int)WSTConf('CONF.wxenabled')==1){
-			    $params = [];
-			    $params['SHOP_NAME'] = $shops['shopName'];
-				$params['APPLY_TIME'] = $shops['applyTime'];
-				$params['NOW_TIME'] = date('Y-m-d H:i:s');
-				$params['REASON'] = "申请入驻成功";
-				WSTWxMessage(['CODE'=>'WX_SHOP_OPEN_SUCCESS','userId'=>$userId,'params'=>$params]);
-			} 
-	    }else{   	
-	        //如果存在手机则发送手机号码提示
-		    $tpl = WSTMsgTemplates('PHONE_SHOP_OPEN_FAIL');
-		    if( $tpl['tplContent']!='' && $tpl['status']=='1' && $data['applyLinkTel']!=''){
-		        $params = ['tpl'=>$tpl,'params'=>['MALL_NAME'=>WSTConf("CONF.mallName"),'REASON'=>$data['applyDesc']]];
-		        $rv = model('admin/LogSms')->sendSMS(0,$userId,$data['applyLinkTel'],$params,$method);
-		    }
-		    //发送邮件
-		    $tpl = WSTMsgTemplates('EMAIL_SHOP_OPEN_FAIL');
-		    if( $tpl['tplContent']!='' && $tpl['status']=='1' && $data['applyLinkEmail']){
-		        $find = ['${LOGIN_NAME}','${MALL_NAME}','${REASON}'];
-		        $replace = [$user->loginName,WSTConf("CONF.mallName"),$data['applyDesc']];
-		        $sendRs = WSTSendMail($data['applyLinkEmail'],'申请入驻失败',str_replace($find,$replace,$tpl['content']));
-		    }
-	    	// 会员发送一条商城消息
-	    	$tpl = WSTMsgTemplates('SHOP_OPEN_FAIL');
-		    if( $tpl['tplContent']!='' && $tpl['status']=='1'){
-		        $find = ['${LOGIN_NAME}','${MALL_NAME}','${REASON}'];
-		        $replace = [$user->loginName,WSTConf("CONF.mallName"),$data['applyDesc']];
-		        WSTSendMsg($userId,str_replace($find,$replace,$tpl['tplContent']),['from'=>0,'dataId'=>$shopId]);
-		    }
-		    //微信消息
-			if((int)WSTConf('CONF.wxenabled')==1){
-				$params = [];
-				$params['SHOP_NAME'] = $shops['shopName'];
-				$params['APPLY_TIME'] = $shops['applyTime'];
-				$params['NOW_TIME'] = date('Y-m-d H:i:s');
-				$params['REASON'] = $data['applyDesc'];
-				WSTWxMessage(['CODE'=>'WX_SHOP_OPEN_FAIL','userId'=>$userId,'params'=>$params]);
-			} 
-	    }
-	}
+            $tpl = WSTMsgTemplates('PHONE_USER_SHOP_OPEN_SUCCESS');
+            if( $tpl['tplContent']!='' && $tpl['status']=='1' && $data['applyLinkTel']!=''){
+                $params = ['tpl'=>$tpl,'params'=>['MALL_NAME'=>WSTConf("CONF.mallName"),'LOGIN_NAME'=>$shops->shopName]];
+                $rv = model('admin/LogSms')->sendSMS(0,$shopId,$data['applyLinkTel'],$params,$method,1);
+            }
+            //发送邮件
+            $tpl = WSTMsgTemplates('EMAIL_USER_SHOP_OPEN_SUCCESS');
+            if( $tpl['tplContent']!='' && $tpl['status']=='1' && $data['applyLinkEmail']){
+                $find = ['${LOGIN_NAME}','${MALL_NAME}'];
+                $replace = [$shops->shopName,WSTConf("CONF.mallName")];
+                $sendRs = WSTSendMail($data['applyLinkEmail'],'申请入驻审核通过',str_replace($find,$replace,$tpl['content']));
+            }
+            // 会员发送一条商城消息
+//            $tpl = WSTMsgTemplates('SHOP_OPEN_SUCCESS');
+//            if( $tpl['tplContent']!='' && $tpl['status']=='1'){
+//                $find = ['${LOGIN_NAME}','${MALL_NAME}'];
+//                $replace = [$shops->loginName,WSTConf("CONF.mallName")];
+//                WSTSendMsg($userId,str_replace($find,$replace,$tpl['tplContent']),['from'=>0,'dataId'=>$shopId]);
+//            }
+            //微信消息
+            if((int)WSTConf('CONF.wxenabled')==1){
+                $params = [];
+                $params['SHOP_NAME'] = $shops['shopName'];
+                $params['APPLY_TIME'] = $shops['applyTime'];
+                $params['NOW_TIME'] = date('Y-m-d H:i:s');
+                $params['REASON'] = "申请入驻成功";
+                WSTWxMessage(['CODE'=>'WX_SHOP_OPEN_SUCCESS','shopId'=>$shopId,'params'=>$params]);
+            }
+        }else{
+            //如果存在手机则发送手机号码提示
+            $tpl = WSTMsgTemplates('PHONE_SHOP_OPEN_FAIL');
+            if( $tpl['tplContent']!='' && $tpl['status']=='1' && $data['applyLinkTel']!=''){
+                $params = ['tpl'=>$tpl,'params'=>['MALL_NAME'=>WSTConf("CONF.mallName"),'REASON'=>$data['applyDesc']]];
+                $rv = model('admin/LogSms')->sendSMS(0,$shopId,$data['applyLinkTel'],$params,$method,1);
+            }
+            //发送邮件
+            $tpl = WSTMsgTemplates('EMAIL_SHOP_OPEN_FAIL');
+            if( $tpl['tplContent']!='' && $tpl['status']=='1' && $data['applyLinkEmail']){
+                $find = ['${LOGIN_NAME}','${MALL_NAME}','${REASON}'];
+                $replace = [$shops->shopName,WSTConf("CONF.mallName"),$data['applyDesc']];
+                $sendRs = WSTSendMail($data['applyLinkEmail'],'申请入驻失败',str_replace($find,$replace,$tpl['content']));
+            }
+            // 会员发送一条商城消息
+//            $tpl = WSTMsgTemplates('SHOP_OPEN_FAIL');
+//            if( $tpl['tplContent']!='' && $tpl['status']=='1'){
+//                $find = ['${LOGIN_NAME}','${MALL_NAME}','${REASON}'];
+//                $replace = [$shops->loginName,WSTConf("CONF.mallName"),$data['applyDesc']];
+//                WSTSendMsg($userId,str_replace($find,$replace,$tpl['tplContent']),['from'=>0,'dataId'=>$shopId]);
+//            }
+            //微信消息
+            if((int)WSTConf('CONF.wxenabled')==1){
+                $params = [];
+                $params['SHOP_NAME'] = $shops['shopName'];
+                $params['APPLY_TIME'] = $shops['applyTime'];
+                $params['NOW_TIME'] = date('Y-m-d H:i:s');
+                $params['REASON'] = $data['applyDesc'];
+                WSTWxMessage(['CODE'=>'WX_SHOP_OPEN_FAIL','shopId'=>$shopId,'params'=>$params]);
+            }
+        }
+    }
 	/**
 	 * 删除申请
 	 */
@@ -410,121 +476,215 @@ class Shops extends Base{
 	/**
 	 * 新增
 	 */
-	public function add(){
-		$validate = new validate();
-		if(!$validate->scene('add')->check(Input('post.')))return WSTReturn($validate->getError());
+//	public function add(){
+//		$validate = new validate();
+//		if(!$validate->scene('add')->check(Input('post.')))return WSTReturn($validate->getError());
+//        //判断经营范围
+//        $goodsCatIds = Input('post.goodsCatIds');
+//        $accredIds = Input('post.accredIds');
+//        if($goodsCatIds=='')return WSTReturn('请选择经营范围');
+//        Db::startTrans();
+//        try{
+//        	$userId = 0;
+//        	$isNewUser = (int)input('post.isNew/d');
+//        	if($isNewUser==1){
+//	        	//创建用户账号
+//	        	$user = [];
+//				$user['loginName'] = input('post.loginName');
+//				$user['loginPwd'] = input('post.loginPwd');
+//				$ck = WSTCheckLoginKey($user['loginName']);
+//				if($ck['status']!=1)return $ck;
+//				if($user['loginPwd']=='')$user['loginPwd'] = '88888888';
+//				$loginPwd = $user['loginPwd'];
+//				$user["loginSecret"] = rand(1000,9999);
+//		    	$user['loginPwd'] = md5($user['loginPwd'].$user['loginSecret']);
+//		    	$user["userType"] = 1;
+//		    	$user['createTime'] = date('Y-m-d H:i:s');
+//	            model('users')->save($user);
+//		        $userId = model('users')->userId;
+//		    }else{
+//		    	$userId = (int)input('post.shopUserId/d');
+//		    	//检查用户是否可用
+//		    	$shopUser = model('users')->where(['userId'=>$userId,'dataFlag'=>1])->find();
+//		    	if(empty($shopUser))return WSTReturn('无效的账号信息');
+//		    	$tmpShop = $this->where(['dataFlag'=>1,'userId'=>$userId])->find();
+//		    	if(!empty($tmpShop))return WSTReturn('所关联账号已有店铺信息');
+//		    	$shopUser->userType = 1;
+//		    	$shopUser->save();
+//		    }
+//	        if($userId>0){
+//	        	//创建商家基础信息
+//		        $data = input('post.');
+//		        $data['createTime'] = date('Y-m-d H:i:s');
+//		        $areaIds = model('Areas')->getParentIs($data['areaId']);
+//			    if(!empty($areaIds))$data['areaIdPath'] = implode('_',$areaIds)."_";
+//			    $areaIds = model('Areas')->getParentIs($data['bankAreaId']);
+//			    if(!empty($areaIds))$data['bankAreaIdPath'] = implode('_',$areaIds)."_";
+//		        WSTUnset($data,'id,shopId,dataFlag,isSelf');
+//		        if($data['shopSn']=='')$data['shopSn'] = $this->getShopSn('S');
+//		        $data['userId'] = $userId;
+//		        $data['applyStatus'] = 2;
+//	        	$this->allowField(true)->save($data);
+//	        	$shopId = $this->shopId;
+//	        	//启用上传图片
+//				WSTUseImages(1, $shopId, $data['shopImg']);
+//				//保存店铺其他信息
+//		        $areaIds = model('Areas')->getParentIs($data['businessAreaPath0']);
+//		        if(!empty($areaIds))$data['businessAreaPath'] = implode('_',$areaIds)."_";
+//		        if($data['establishmentDate']=='')unset($data['establishmentDate']);
+//		        if($data['businessEndDate']=='')unset($data['businessEndDate']);
+//		        if($data['businessStartDate']=='')unset($data['businessStartDate']);
+//		        if($data['legalCertificateStartDate']=='')unset($data['legalCertificateStartDate']);
+//		        if($data['legalCertificateEndDate']=='')unset($data['legalCertificateEndDate']);
+//		        if($data['organizationCodeStartDate']=='')unset($data['organizationCodeStartDate']);
+//		        if($data['organizationCodeEndDate']=='')unset($data['organizationCodeEndDate']);
+//		        $data['registeredCapital'] = (float)$data['registeredCapital'];
+//		        $data['shopId'] = $shopId;
+//
+//		        $seModel = model('ShopExtras');
+//		        $seModel->allowField(true)->save($data);
+//		        $Id = $seModel->where(['shopId'=>$shopId])->value('id');
+//		        // 判断是否有上传图片资料,启用上传图片[extras表]
+//		        WSTUseImages(1, $Id, $data['legalCertificateImg'], 'shop_extras');
+//		        WSTUseImages(1, $Id, $data['businessLicenceImg'], 'shop_extras');
+//		        WSTUseImages(1, $Id, $data['bankAccountPermitImg'], 'shop_extras');
+//		        WSTUseImages(1, $Id, $data['organizationCodeImg'], 'shop_extras');
+//		        WSTUseImages(1, $Id, $data['taxRegistrationCertificateImg'], 'shop_extras');
+//		        WSTUseImages(1, $Id, $data['taxpayerQualificationImg'], 'shop_extras');
+//	        	//建立店铺配置信息
+//	        	$sc = [];
+//	        	$sc['shopId'] = $shopId;
+//	        	Db::name('ShopConfigs')->insert($sc);
+//	        	$su = [];
+//	        	$su["shopId"] = $shopId;
+//	        	$su["userId"] = $userId;
+//	        	$su["roleId"] = 0;
+//	        	Db::name('shop_users')->insert($su);
+//	        	//建立店铺评分记录
+//				$ss = [];
+//				$ss['shopId'] = $shopId;
+//				$ss['totalScore'] = 5;
+//				$ss['goodsScore'] = 5;
+//				$ss['serviceScore'] = 5;
+//				$ss['timeScore'] = 0;
+//				Db::name('shop_scores')->insert($ss);
+//	        	//经营范围
+//		        $goodsCats = explode(',',$goodsCatIds);
+//		        foreach ($goodsCats as $v){
+//		        	if((int)$v>0)Db::name('cat_shops')->insert(['shopId'=>$shopId,'catId'=>$v]);
+//		        }
+//		        //认证类型
+//	            if($accredIds!=''){
+//	                $accreds = explode(',',$accredIds);
+//		            foreach ($accreds as $v){
+//			        	if((int)$v>0)Db::name('shop_accreds')->insert(['shopId'=>$shopId,'accredId'=>$v]);
+//			        }
+//	            }
+//	            $data['applyStatus'] = 2;
+//	            $data['applyDesc'] = '';
+//	            $this->sendMessages($shopId,$userId,$data,'add');
+//	        }
+//	        Db::commit();
+//	        return WSTReturn("新增成功", 1);
+//        }catch (\Exception $e) {
+//            Db::rollback();
+//            return WSTReturn('新增失败',-1);
+//        }
+//	}
+
+    public function add(){
+        $validate = new validate();
+        if(!$validate->scene('add')->check(Input('post.')))return WSTReturn($validate->getError());
         //判断经营范围
         $goodsCatIds = Input('post.goodsCatIds');
         $accredIds = Input('post.accredIds');
         if($goodsCatIds=='')return WSTReturn('请选择经营范围');
         Db::startTrans();
         try{
-        	$userId = 0;
-        	$isNewUser = (int)input('post.isNew/d');
-        	if($isNewUser==1){
-	        	//创建用户账号
-	        	$user = [];
-				$user['loginName'] = input('post.loginName');
-				$user['loginPwd'] = input('post.loginPwd');
-				$ck = WSTCheckLoginKey($user['loginName']);
-				if($ck['status']!=1)return $ck;
-				if($user['loginPwd']=='')$user['loginPwd'] = '88888888';
-				$loginPwd = $user['loginPwd'];
-				$user["loginSecret"] = rand(1000,9999);
-		    	$user['loginPwd'] = md5($user['loginPwd'].$user['loginSecret']);
-		    	$user["userType"] = 1;
-		    	$user['createTime'] = date('Y-m-d H:i:s');
-	            model('users')->save($user);
-		        $userId = model('users')->userId;
-		    }else{
-		    	$userId = (int)input('post.shopUserId/d');
-		    	//检查用户是否可用
-		    	$shopUser = model('users')->where(['userId'=>$userId,'dataFlag'=>1])->find();
-		    	if(empty($shopUser))return WSTReturn('无效的账号信息');
-		    	$tmpShop = $this->where(['dataFlag'=>1,'userId'=>$userId])->find();
-		    	if(!empty($tmpShop))return WSTReturn('所关联账号已有店铺信息');
-		    	$shopUser->userType = 1;
-		    	$shopUser->save();
-		    }
-	        if($userId>0){
-	        	//创建商家基础信息
-		        $data = input('post.');
-		        $data['createTime'] = date('Y-m-d H:i:s');
-		        $areaIds = model('Areas')->getParentIs($data['areaId']);
-			    if(!empty($areaIds))$data['areaIdPath'] = implode('_',$areaIds)."_";
-			    $areaIds = model('Areas')->getParentIs($data['bankAreaId']);
-			    if(!empty($areaIds))$data['bankAreaIdPath'] = implode('_',$areaIds)."_";
-		        WSTUnset($data,'id,shopId,dataFlag,isSelf');
-		        if($data['shopSn']=='')$data['shopSn'] = $this->getShopSn('S');
-		        $data['userId'] = $userId;
-		        $data['applyStatus'] = 2;
-	        	$this->allowField(true)->save($data);
-	        	$shopId = $this->shopId;
-	        	//启用上传图片
-				WSTUseImages(1, $shopId, $data['shopImg']);
-				//保存店铺其他信息
-		        $areaIds = model('Areas')->getParentIs($data['businessAreaPath0']);
-		        if(!empty($areaIds))$data['businessAreaPath'] = implode('_',$areaIds)."_";
-		        if($data['establishmentDate']=='')unset($data['establishmentDate']);
-		        if($data['businessEndDate']=='')unset($data['businessEndDate']);
-		        if($data['businessStartDate']=='')unset($data['businessStartDate']);
-		        if($data['legalCertificateStartDate']=='')unset($data['legalCertificateStartDate']);
-		        if($data['legalCertificateEndDate']=='')unset($data['legalCertificateEndDate']);
-		        if($data['organizationCodeStartDate']=='')unset($data['organizationCodeStartDate']);
-		        if($data['organizationCodeEndDate']=='')unset($data['organizationCodeEndDate']);
-		        $data['registeredCapital'] = (float)$data['registeredCapital'];
-		        $data['shopId'] = $shopId;
+            //创建用户账号
+            $user = [];
+            $user['userPhone'] = input('post.userPhone');
+            $user['pwd'] = md5(input('post.pwd',"",'trim'));
+            $user['createTime'] = date("Y-m-d H:i:s");
+            model('shop_admin')->save($user);
+            $adminId = model('shop_admin')->id;
 
-		        $seModel = model('ShopExtras');
-		        $seModel->allowField(true)->save($data);
-		        $Id = $seModel->where(['shopId'=>$shopId])->value('id');
-		        // 判断是否有上传图片资料,启用上传图片[extras表]
-		        WSTUseImages(1, $Id, $data['legalCertificateImg'], 'shop_extras');
-		        WSTUseImages(1, $Id, $data['businessLicenceImg'], 'shop_extras');
-		        WSTUseImages(1, $Id, $data['bankAccountPermitImg'], 'shop_extras');
-		        WSTUseImages(1, $Id, $data['organizationCodeImg'], 'shop_extras');
-		        WSTUseImages(1, $Id, $data['taxRegistrationCertificateImg'], 'shop_extras');
-		        WSTUseImages(1, $Id, $data['taxpayerQualificationImg'], 'shop_extras');
-	        	//建立店铺配置信息
-	        	$sc = [];
-	        	$sc['shopId'] = $shopId;
-	        	Db::name('ShopConfigs')->insert($sc);
-	        	$su = [];
-	        	$su["shopId"] = $shopId;
-	        	$su["userId"] = $userId;
-	        	$su["roleId"] = 0;
-	        	Db::name('shop_users')->insert($su);
-	        	//建立店铺评分记录
-				$ss = [];
-				$ss['shopId'] = $shopId;
-				$ss['totalScore'] = 5;
-				$ss['goodsScore'] = 5;
-				$ss['serviceScore'] = 5;
-				$ss['timeScore'] = 0;
-				Db::name('shop_scores')->insert($ss);
-	        	//经营范围
-		        $goodsCats = explode(',',$goodsCatIds);
-		        foreach ($goodsCats as $v){
-		        	if((int)$v>0)Db::name('cat_shops')->insert(['shopId'=>$shopId,'catId'=>$v]);
-		        }
-		        //认证类型
-	            if($accredIds!=''){
-	                $accreds = explode(',',$accredIds);
-		            foreach ($accreds as $v){
-			        	if((int)$v>0)Db::name('shop_accreds')->insert(['shopId'=>$shopId,'accredId'=>$v]);
-			        }
-	            }
-	            $data['applyStatus'] = 2;
-	            $data['applyDesc'] = '';
-	            $this->sendMessages($shopId,$userId,$data,'add');
-	        }
-	        Db::commit();
-	        return WSTReturn("新增成功", 1);
-        }catch (\Exception $e) {
+            //创建商家基础信息
+            $data = input('post.');
+            $data['createTime'] = date('Y-m-d H:i:s');
+            $data['applyTime'] = date('Y-m-d H:i:s');
+            $data['shopAdminId'] = $adminId;
+            $areaIds = model('Areas')->getParentIs($data['areaId']);
+            if(!empty($areaIds))$data['areaIdPath'] = implode('_',$areaIds)."_";
+            $areaIds = model('Areas')->getParentIs($data['bankAreaId']);
+            if(!empty($areaIds))$data['bankAreaIdPath'] = implode('_',$areaIds)."_";
+            WSTUnset($data,'id,shopId,dataFlag,isSelf');
+            if($data['shopSn']=='')$data['shopSn'] = $this->getShopSn('S');
+            $data['userId'] = 0;
+            $data['applyStatus'] = 2;
+            $this->allowField(true)->save($data);
+            $shopId = $this->shopId;
+            //启用上传图片
+            WSTUseImages(1, $shopId, $data['shopImg']);
+            //保存店铺其他信息
+            $areaIds = model('Areas')->getParentIs($data['businessAreaPath0']);
+            if(!empty($areaIds))$data['businessAreaPath'] = implode('_',$areaIds)."_";
+            if($data['establishmentDate']=='')unset($data['establishmentDate']);
+            if($data['businessEndDate']=='')unset($data['businessEndDate']);
+            if($data['businessStartDate']=='')unset($data['businessStartDate']);
+            if($data['legalCertificateStartDate']=='')unset($data['legalCertificateStartDate']);
+            if($data['legalCertificateEndDate']=='')unset($data['legalCertificateEndDate']);
+            if($data['organizationCodeStartDate']=='')unset($data['organizationCodeStartDate']);
+            if($data['organizationCodeEndDate']=='')unset($data['organizationCodeEndDate']);
+            $data['registeredCapital'] = (float)$data['registeredCapital'];
+            $data['shopId'] = $shopId;
+
+            $seModel = model('ShopExtras');
+            $seModel->allowField(true)->save($data);
+            $Id = $seModel->where(['shopId'=>$shopId])->value('id');
+            // 判断是否有上传图片资料,启用上传图片[extras表]
+            WSTUseImages(1, $Id, $data['legalCertificateImg'], 'shop_extras');
+            WSTUseImages(1, $Id, $data['businessLicenceImg'], 'shop_extras');
+            WSTUseImages(1, $Id, $data['bankAccountPermitImg'], 'shop_extras');
+            WSTUseImages(1, $Id, $data['organizationCodeImg'], 'shop_extras');
+            WSTUseImages(1, $Id, $data['taxRegistrationCertificateImg'], 'shop_extras');
+            WSTUseImages(1, $Id, $data['taxpayerQualificationImg'], 'shop_extras');
+            //建立店铺配置信息
+            $sc = [];
+            $sc['shopId'] = $shopId;
+            Db::name('ShopConfigs')->insert($sc);
+            //建立店铺评分记录
+            $ss = [];
+            $ss['shopId'] = $shopId;
+            $ss['totalScore'] = 5;
+            $ss['goodsScore'] = 5;
+            $ss['serviceScore'] = 5;
+            $ss['timeScore'] = 0;
+            Db::name('shop_scores')->insert($ss);
+            //经营范围
+            $goodsCats = explode(',',$goodsCatIds);
+            foreach ($goodsCats as $v){
+                if((int)$v>0)Db::name('cat_shops')->insert(['shopId'=>$shopId,'catId'=>$v]);
+            }
+            //认证类型
+            if($accredIds!=''){
+                $accreds = explode(',',$accredIds);
+                foreach ($accreds as $v){
+                    if((int)$v>0)Db::name('shop_accreds')->insert(['shopId'=>$shopId,'accredId'=>$v]);
+                }
+            }
+            $data['applyStatus'] = 2;
+            $data['applyDesc'] = '';
+            $this->sendMessages($shopId,$data,'add');
+
+            Db::commit();
+            return WSTReturn("新增成功", 1);
+        } catch (\Exception $e) {
             Db::rollback();
             return WSTReturn('新增失败',-1);
         }
-	}
+    }
+
     /**
 	 * 编辑
 	 */
@@ -546,6 +706,9 @@ class Shops extends Base{
 		    if(!empty($areaIds))$data['areaIdPath'] = implode('_',$areaIds)."_";
 		    $areaIds = model('Areas')->getParentIs($data['bankAreaId']);
 		    if(!empty($areaIds))$data['bankAreaIdPath'] = implode('_',$areaIds)."_";
+		    // 更新用户信息
+            model("ShopAdmin")->updateAdmin($shops->shopId, $shops->shopAdminId, $data['userPhone'], $data["pwd"]);
+
 	        WSTUnset($data,'id,shopId,userId,dataFlag,createTime,goodsCatIds,accredIds,isSelf,applyStatus,applyDesc');
 	        //启用上传图片
 			WSTUseImages(1, $shopId, $data['shopImg'],'shops','shopImg');
@@ -605,6 +768,7 @@ class Shops extends Base{
 	        Db::commit();
 	        return WSTReturn("编辑成功", 1);
         }catch (\Exception $e) {
+            return $e->getMessage();
             Db::rollback();
             return WSTReturn('编辑失败',-1);
         }

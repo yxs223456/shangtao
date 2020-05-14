@@ -57,8 +57,9 @@ class Thirdlogin extends Base {
 	 */
 	public function getThirdLogins(){
 	
-		$addon = Db::name('addons')->where("name","Thirdlogin")->field("config")->find();
-		$config = json_decode($addon["config"],true);
+//		$addon = Db::name('addons')->where("name","Thirdlogin")->field("config")->find();
+//		$config = json_decode($addon["config"],true);
+        $config =  config("addon.thirdlogin");
 		return $config;
 	}
 	
