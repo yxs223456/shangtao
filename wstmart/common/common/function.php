@@ -942,7 +942,7 @@ function WSTEditUpload($fromType){
         $fileContent = file_get_contents(\think\facade\Env::get('root_path') . $filePath);
         $fileUrl = \wstmart\common\helper\AliyunOss::putObject($filename, $fileContent);
         unlink(\think\facade\Env::get('root_path') . $filePath);
-    	return json_encode(array('error' => 0, 'url' => $fileUrl));
+    	return json_encode(array('error' => 0, 'url' => $fileUrl["url"]));
 	}
 }
 /**
