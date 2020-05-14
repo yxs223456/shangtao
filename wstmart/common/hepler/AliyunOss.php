@@ -7,6 +7,8 @@
  */
 namespace wstmart\common\helper;
 
+include_once(\Env::get('root_path') . 'extend/aliyun-oss-php-sdk-master/autoload.php');
+
 use OSS\OssClient;
 
 class AliyunOss

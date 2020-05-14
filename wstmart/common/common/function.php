@@ -11,7 +11,7 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ============================================================================
  */
-
+include_once(\think\facade\Env::get('root_path') . "wstmart/common/hepler/AliyunOss.php");
 use think\Db;
 
 
