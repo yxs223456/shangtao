@@ -50,7 +50,7 @@
           <td>
             <div id="preview" style="min-height:30px;">
               {if ($data['adFile']!='')}
-              <img src="__ROOT__/{$data['adFile']}">
+              <img src="{$data['adFile']}">
               {/if}
             </div>
             <input type="hidden" name="adFile" id="adFile" class="ipt" value="{$data['adFile']}" />
@@ -80,14 +80,14 @@
             <input type="text" id="adSort" class="ipt" maxLength="20"  value='{$data['adSort']}' />
           </td>
        </tr>
-  
+
   <tr>
      <td colspan='2' align='center' class='wst-bottombar'>
        <input type="hidden" name="id" id="adId" class="ipt" value="{$data['adId']+0}" />
        <button type="button" class="btn btn-primary btn-mright" onclick="javascript:save(1)"><i class="fa fa-check"></i>提交</button>
        {if $data['adId']==0}
-       <button type="button" class="btn btn-primary btn-mright" onclick="javascript:continueAdd(1)"><i class="fa fa-check"></i>继续新增</button> 
-       {/if} 
+       <button type="button" class="btn btn-primary btn-mright" onclick="javascript:continueAdd(1)"><i class="fa fa-check"></i>继续新增</button>
+       {/if}
         <button type="button" class="btn" onclick="javascript:history.go(-1)"><i class="fa fa-angle-double-left"></i>返回</button>
      </td>
   </tr>

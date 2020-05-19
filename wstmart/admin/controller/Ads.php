@@ -39,6 +39,34 @@ class Ads extends Base{
     public function toEdit(){
         $m = new M();
         $data = $m->getById(Input("id/d",0));
+        if (!empty($data["targetParams"])) {
+            $data["goodsId"] = 0;
+            $data["shopId"] = 0;
+            $params = json_decode($data["targetParams"], true);
+            if ($data["targetPage"] == 1) {
+                $data["goodsId"] = $params["goodsId"];
+            } elseif ($data["targetPage"] == 2) {
+                $data["shopId"] = $params["shopId"];
+            }
+        }
+
+        $goodsModel = new \wstmart\admin\model\Goods();
+        $allValidGoods = $goodsModel
+            ->where("goodsStatus", 1)
+            ->where("isSale", 1)
+            ->where("dataFlag", 1)
+            ->field("goodsName,goodsSn,goodsId")
+            ->select()->toArray();
+
+        $shopModel = new \wstmart\admin\model\Shops();
+        $allValidShop = $shopModel
+            ->where("shopStatus", 1)
+            ->where("dataFlag", 1)
+            ->field("shopId,shopName")
+            ->select()->toArray();
+        $this->assign("allGoods", $allValidGoods);
+        $this->assign("allShops", $allValidShop);
+
         return $this->fetch("edit",['data'=>$data]);
     }
     /**

@@ -46,7 +46,27 @@ class ads extends Base{
 		$data = input('post.');
 		$data['createTime'] = date('Y-m-d H:i:s');
 		$data['adSort'] = (int)$data['adSort'];
+		if ($data["targetPage"] == 1) {
+		    if (empty($data["targetPageGoods"])) {
+                return WSTReturn('请选择跳转商品',-1);
+            }
+		    $data["targetParams"] = json_encode([
+		        "goodsId" => $data["targetPageGoods"],
+            ], JSON_UNESCAPED_UNICODE);
+        } elseif ($data["targetPage"] == 2) {
+            if (empty($data["targetPageShop"])) {
+                return WSTReturn('请选择跳转店铺',-1);
+            }
+            $data["targetParams"] = json_encode([
+                "shopId" => $data["targetPageGoods"],
+            ], JSON_UNESCAPED_UNICODE);
+
+        } else {
+            return WSTReturn('请选择跳转页面',-1);
+        }
 		WSTUnset($data,'adId');
+		WSTUnset($data,'targetPageGoods');
+		WSTUnset($data,'targetPageShop');
 		Db::startTrans();
 		try{
 			$validate = new validate();

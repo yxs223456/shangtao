@@ -138,7 +138,6 @@ class GoodsCats extends Base{
 	public function editsimpleName(){
 		$catName = input('simpleName');
 		if($catName=='')return WSTReturn("操作失败，商品分类名缩写不能为空");
-		if(mb_strlen($catName)>4)return WSTReturn('商品分类名缩写不能超过4个字');
 		$id = (int)input('id');
 		$result = $this->where("catId = ".$id)->update(['simpleName' => $catName]);
 		if(false !== $result){

@@ -6,7 +6,7 @@ function initGrid(){
   var cols = [
             {title:'图标', name:'' ,width:50, align:'center', renderer: function(val,item,rowIndex){
                var adFile = item['adFile'].split(',');
-               return'<img src="'+WST.conf.ROOT+'/'+adFile[0]+'" height="28px" width="100"/>';
+               return'<img src="'+adFile[0]+'" width="100"/>';
             }},
             {title:'标题', name:'adName', width: 100},
             {title:'广告位置', name:'positionName' ,width:80},
@@ -133,7 +133,7 @@ function editInit(){
   		  var json = WST.toAdminJson(f);
   		  if(json.status==1){
   			$('#uploadMsg').empty().hide();
-        var html = '<img src="'+WST.conf.ROOT+'/'+json.savePath+json.thumb+'" />';
+        var html = '<img src="'+json.savePath+json.thumb+'" />';
         $('#preview').html(html);
         // 图片路径
         $('#adFile').val(json.savePath+json.thumb);
@@ -149,9 +149,15 @@ function editInit(){
     		timely:2,
             fields: {
                 adPositionId: {
+                    rule:"required",
+                    msg:{required:"请选择广告位置"},
+                    tip:"请选择广告位置",
+                    ok:"验证通过",
+                },
+                targetPage: {
                   rule:"required",
-                  msg:{required:"请选择广告位置"},
-                  tip:"请选择广告位置",
+                  msg:{required:"请选择跳转页面"},
+                  tip:"请选择跳转页面",
                   ok:"验证通过",
                 },
                 adName: {
@@ -235,5 +241,17 @@ function getPhotoSize(pType)
          }
       }
   });
+}
 
+function getTargetPageInfo(targetPage) {
+    if(1==targetPage){
+        $('#targetPageShopTr').attr("style", "display: none")
+        $('#targetPageGoodsTr').attr("style", "")
+    } else if (2==targetPage) {
+        $('#targetPageGoodsTr').attr("style", "display: none")
+        $('#targetPageShopTr').attr("style", "")
+    } else {
+        $('#targetPageGoodsTr').attr("style", "display: none")
+        $('#targetPageShopTr').attr("style", "display: none")
+    }
 }

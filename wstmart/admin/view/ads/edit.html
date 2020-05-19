@@ -31,6 +31,39 @@
             </select>
           </td>
        </tr>
+    <tr>
+        <th>跳转页面<font color='red'>*</font>：</th>
+        <td>
+            <select id="targetPage" name="targetPage" class='ipt' maxLength='20' onchange='javascript:getTargetPageInfo(this.value);'>
+                <option value="">-请选择-</option>
+                <option {if $data['targetPage'] == 1}selected{/if} value="1">商品详情页</option>
+                <option {if $data['targetPage'] == 2}selected{/if} value="2">店铺详情页</option>
+            </select>
+        </td>
+    </tr>
+    <tr id="targetPageGoodsTr"  {if $data['targetPage'] != 1}style="display: none"{/if}>
+        <th>跳转商品<font color='red'>*</font>：</th>
+        <td>
+            <select id="targetPageGoods" name="targetPageGoods" class='ipt'>
+                <option value=''>请选择</option>
+                {volist name="allGoods" id='goods'}
+                <option {if $data['goodsId'] == $goods['goodsId']}selected{/if} value="{$goods['goodsId']}">{$goods['goodsName']}(商品编号：{$goods['goodsSn']})</option>
+                {/volist}
+            </select>
+        </td>
+    </tr>
+
+    <tr id="targetPageShopTr" {if $data['targetPage'] != 2}style="display: none"{/if}>
+        <th>跳转店铺<font color='red'>*</font>：</th>
+        <td>
+            <select id="targetPageShop" name="targetPageShop" class='ipt'>
+                <option value=''>请选择</option>
+                {volist name="allShops" id='shop'}
+                <option {if $data['shopId'] == $shop['shopId']}selected{/if} value="{$shop['shopId']}">{$shop['shopName']}</option>
+                {/volist}
+            </select>
+        </td>
+    </tr>
        <tr>
           <th>广告标题<font color='red'>*</font>：</th>
           <td><input type='text' id='adName' name="adName" value='{$data['adName']}' class='ipt' maxLength='20'/></td>
@@ -49,7 +82,7 @@
           <td>
             <div id="preview" style="min-height:30px;">
               {if ($data['adFile']!='')}
-              <img src="__ROOT__/{$data['adFile']}">
+              <img src="{$data['adFile']}">
               {/if}
             </div>
             <input type="hidden" name="adFile" id="adFile" class="ipt" value="{$data['adFile']}" />

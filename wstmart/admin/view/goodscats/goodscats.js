@@ -15,10 +15,10 @@ function initGrid(){
                 	oldData[item.catId] = item.catName;
                     return '<input type="text" size="40" value="'+item.catName+'" onblur="javascript:editName('+item.catId+',this)" style="width:200px"/>';
             }},
-	        { display: '分类名缩写', width: 150,name: 'simpleName', id:'catId', align: 'left',isSort: false,render: function (item)
+	        { display: '分类名英文', width: 150,name: 'simpleName', id:'catId', align: 'left',isSort: false,render: function (item)
                 {
                 	oldData[item.catId] = item.simpleName;
-                    return '<input type="text" size="40" maxLength="4" value="'+item.simpleName+'" onblur="javascript:editsimpleName('+item.catId+',this)" style="width:120px"/>';
+                    return '<input type="text" size="40" value="'+item.simpleName+'" onblur="javascript:editsimpleName('+item.catId+',this)" style="width:120px"/>';
             }},
             { display: '推荐楼层', width: 70, name: 'isFloor',isSort: false,
                 render: function (itemf)
@@ -130,7 +130,7 @@ function toEdit(pid,id){
 				WST.setValues(json);
 				layui.form.render();
 				if(json.catImg){
-					$('#preview').html('<img src="'+WST.conf.ROOT+'/'+json.catImg+'" height="70px" />');
+					$('#preview').html('<img src="'+json.catImg+'" height="70px" />');
 				}else{
 					$('#preview').html('');
 				}
@@ -159,8 +159,8 @@ function editsBox(id,v){
 	    		rule: '商品分类名称:required;length[~20];'
 	    	},
 	    	simpleName: {
-	    		tip: "请输入商品分类名缩写",
-	    		rule: '商品分类名缩写:required;length[~20];'
+	    		tip: "请输入商品分类名英文",
+	    		rule: '商品分类名缩写:required;length[~255];'
 	    	},
 	    	commissionRate: {
 	    		tip: "请输入分类的佣金",
@@ -221,7 +221,7 @@ function initUpload(){
 	        $('#uploadMsg').empty().hide();
 	        //将上传的图片路径赋给全局变量
 		    $('#catImg').val(json.savePath+json.thumb);
-		    $('#preview').html('<img src="'+WST.conf.ROOT+'/'+json.savePath+json.thumb+'" height="75" />');
+		    $('#preview').html('<img src="'+json.savePath+json.thumb+'" height="75" />');
 	      }else{
 	      	WST.msg(json.msg,{icon:2});
 	      }
@@ -253,9 +253,7 @@ function editsimpleName(id,obj){
 		obj.value = oldData[id];
 		return;
 	}
-	if(obj.value.length>4){
-		return WST.msg('商品分类名缩写不能超过4个字',{icon:2});
-	}
+
 	$.post(WST.U('admin/goodscats/editsimpleName'),{id:id,simpleName:obj.value},function(data,textStatus){
 	    var json = WST.toAdminJson(data);
 	    if(json.status=='1'){

@@ -404,10 +404,12 @@ function WSTUploadPic($fromType=0){
         }
         $filename = $info->getFilename();
         $fileContent = file_get_contents(\think\facade\Env::get('root_path') . $filePath . '/' . $filename);
-        $fileUrl = \wstmart\common\helper\AliyunOss::putObject($filename, $fileContent);
+        $ossFilePath = date("ymd") . "/" . $filename;
+        $fileUrl = \wstmart\common\helper\AliyunOss::putObject($ossFilePath, $fileContent);
         if ($isThumb==1) {
             $thumbContent = file_get_contents(\think\facade\Env::get('root_path') . $filePath . '/' . $thumbSrc);
-            \wstmart\common\helper\AliyunOss::putObject($thumbSrc, $thumbContent);
+            $thumbSrcPath = date("ymd") . "/" . $thumbSrc;
+                \wstmart\common\helper\AliyunOss::putObject($thumbSrcPath, $thumbContent);
         }
         $ossDomain = str_replace($filename,'',$fileUrl['url']);
         unlink(\think\facade\Env::get('root_path') . $filePath . '/' . $filename);
