@@ -4,7 +4,6 @@ function initSaleGrid(){
     var cols = [
             {title:'&nbsp;', name:'goodsImg', width: 30, renderer: function(val,item,rowIndex){
             	var thumb = item['goodsImg'];
-	        	thumb = thumb.replace('.','_thumb.');
             	return "<span class='weixin'><img id='img' onmouseout='toolTip()' onmouseover='toolTip()' style='height:60px;width:60px;' src='"+thumb
             	+"'><span class='imged' ><img  style='height:180px;width:180px;' src='"+item['goodsImg']+"'></span></span>";
             }},
