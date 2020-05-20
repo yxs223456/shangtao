@@ -39,6 +39,9 @@ class AliyunOss
 
         $ossClient = new OssClient(self::$accessKeyId, self::$accessKeySecret, self::$endpoint);
         $result = $ossClient->putObject(self::$bucket, $filename, $content);
+        if (isset($result['info']['url']) && strpos($result['info']['url'], "https") === false) {
+            $result['info']['url'] = str_replace("http", "https", $result['info']['url']);
+        }
         $rs = [
             'url' => $result['info']['url']
         ];
