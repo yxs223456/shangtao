@@ -22,7 +22,6 @@ function initSaleGrid(){
             {title:'销量', name:'saleNum' ,width:20,sortable:true,align:'center'},
             {title:'操作', name:'' ,width:150, align:'center', renderer: function(val,item,rowIndex){
                 var h = "";
-	            h += "<a class='btn btn-blue' target='_blank' href='"+WST.U("home/goods/detail","goodsId="+item['goodsId'])+"'><i class='fa fa-search'></i>查看</a> ";
 	            if(WST.GRANT.SJSP_04)h += "<a class='btn btn-red' href='javascript:illegal(" + item['goodsId'] + ",1)'><i class='fa fa-ban'></i>违规下架</a> ";
 	            if(WST.GRANT.SJSP_03)h += "<a class='btn btn-red' href='javascript:del(" + item['goodsId'] + ",1)'><i class='fa fa-trash-o'></i>删除</a> "; 
 	            return h;
@@ -107,7 +106,6 @@ function initAuditGrid(){
             {title:'销量', name:'saleNum' ,width:20,sortable:true,align:'center'},
             {title:'操作', name:'' ,width:150, align:'center', renderer: function(val,item,rowIndex){
                 var h = "";
-	            h += "<a class='btn btn-blue' target='_blank' href='"+WST.U("home/goods/detail","goodsId="+item['goodsId']+"&key="+item['verfiycode'])+"'><i class='fa fa-search'></i>查看</a> ";
 	            if(WST.GRANT.DSHSP_04)h += "<a class='btn btn-blue' href='javascript:allow(" + item['goodsId'] + ",0)'><i class='fa fa-check'></i>审核通过</a> ";
 	            if(WST.GRANT.DSHSP_04)h += "<a class='btn btn-red' href='javascript:illegal(" + item['goodsId'] + ",0)'><i class='fa fa-ban'></i>审核不通过</a> ";
 	            if(WST.GRANT.DSHSP_03)h += "<a class='btn btn-red' href='javascript:del(" + item['goodsId'] + ",0)'><i class='fa fa-trash-o'></i>删除</a>"; 
@@ -217,7 +215,6 @@ function initIllegalGrid(){
             {title:'违规原因', name:'illegalRemarks' ,width:160},
             {title:'操作', name:'' ,width:150, align:'center', renderer: function(val,item,rowIndex){
                 var h = "";
-	            h += "<a class='btn btn-blue' target='_blank' href='"+WST.U("home/goods/detail","goodsId="+item['goodsId']+"&key="+item['verfiycode'])+"'><i class='fa fa-search'></i>查看</a> ";
 	            if(WST.GRANT.WGSP_04)h += "<a class='btn btn-blue' href='javascript:allow(" + item['goodsId'] + ",0)'><i class='fa fa-check'></i>审核通过</a> ";
 	            if(WST.GRANT.WGSP_03)h += "<a class='btn btn-red' href='javascript:del(" + item['goodsId'] + ",0)'><i class='fa fa-trash-o'></i>删除</a></div> "; 
 	            return h;
