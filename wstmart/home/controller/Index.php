@@ -18,17 +18,18 @@ class Index extends Base{
           'checkAuth' =>  ['only'=>'getsysmessages']
     ];
     public function index(){
-    	$categorys = model('GoodsCats')->getFloors();
-    	$this->assign('floors',$categorys);
-        $this->assign('hideCategory',1);
-
-      //获取用户积分
-      $rs = model('Users')->getFieldsById((int)session('WST_USER.userId'),'userScore');
-      $this->assign('object',$rs);
-        // 店铺街数据
-      $shopStreet = model('shops')->indexShopQuery();
-    	$this->assign('shopStreet',$shopStreet);
-    	return $this->fetch('index');
+//    	$categorys = model('GoodsCats')->getFloors();
+//    	$this->assign('floors',$categorys);
+//        $this->assign('hideCategory',1);
+//
+//      //获取用户积分
+//      $rs = model('Users')->getFieldsById((int)session('WST_USER.userId'),'userScore');
+//      $this->assign('object',$rs);
+//        // 店铺街数据
+//      $shopStreet = model('shops')->indexShopQuery();
+//    	$this->assign('shopStreet',$shopStreet);
+    	$this->redirect("/shop-login");
+//    	return $this->fetch('index');
     }
     /**
      * 保存目录ID

@@ -40,7 +40,7 @@ class Goods extends CGoods{
 		}else if($c1Id!=0){
 			$where['shopCatId1'] = $c1Id;
 		}
-		$shopId = (int)session('WST_USER.shopId');
+
 		$where['m.shopId'] = $shopId;
 		$rs = $this->alias('m')
 		    ->where($where)

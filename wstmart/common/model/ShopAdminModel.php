@@ -108,16 +108,20 @@ class ShopAdminModel extends Base
         }
         $rs = $this->where("userPhone",$loginName)->find();
         if(!empty($rs)){
-            session('WST_SHOP_ADMIN', $rs);
+            session('WST_USER', $rs);
             if($rs['pwd']!=md5($loginPwd))return WSTReturn("密码错误");
             $shopAdminId = $rs['id'];
             $shop = Db::name("shops")->where("shopAdminId", $shopAdminId)->find();
             if(empty($shop)){
                 return WSTReturn('您还没申请店铺!', -2);
             }
-            $WST_SHOP_ADMIN = session('WST_SHOP_ADMIN');
+            $now = date("Y-m-d H:i:s");
+            $this->where("id",$rs["id"])->update(["lastTime"=>$now]);
+            session('WST_SHOP', $shop);
+            $WST_SHOP_ADMIN = session('WST_USER');
             $WST_SHOP_ADMIN['tempShopId'] = $shop["shopId"];
-            session('WST_SHOP_ADMIN',$WST_SHOP_ADMIN);
+            $WST_SHOP_ADMIN['lastTime'] = $now;
+            session('WST_USER',$WST_SHOP_ADMIN);
             if($shop["shopStatus"] == -2){
                 return WSTReturn("店铺已停用，不能登录!",-1);
             }

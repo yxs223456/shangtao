@@ -16,17 +16,7 @@ function login(typ){
 		if(json.status=='1'){
 			WST.msg(json.msg, {icon: 1});
 			var url = json.url;
-        	if(WST.blank(url)){
-        		location.href = url;
-        	}else{
-    			if(typ==2){
-                	location.href=json.url;
-    			}else if(typ==1){
-                	location.href=WST.U('home/users/index');	
-    			}else{
-                	parent.location.reload();
-    			}
-        	}
+			location.href = url;
 		}else{
 			layer.close(ll);
 			WST.msg(json.msg, {icon: 5});

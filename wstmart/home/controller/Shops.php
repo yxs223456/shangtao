@@ -64,7 +64,7 @@ class Shops extends Base{
             $rs["status"] = 1;
             $rs['url'] = config("web.self_domain") . "/home/shops/checkapplystatus.html";
         } else if (isset($rs["status"]) && $rs["status"] == 1) {
-            $rs['url'] = session('WST_HO_CURRENTURL');
+            $rs['url'] = config("web.self_domain") . "/home/shops/index.html";
         } else {
             $rs['url'] = session('WST_HO_CURRENTURL');
         }
@@ -75,17 +75,10 @@ class Shops extends Base{
 	 * 商家登录
 	 */
 	public function login(){
-//		$USER = session('WST_USER');
-//        if(!empty($USER) && isset($USER['shopId'])){
-//            $this->redirect("shops/index");
-//        }
-//        $loginName = cookie("loginName");
-//        if(!empty($loginName)){
-//            $this->assign('loginName',cookie("loginName"));
-//        }else{
-//            $this->assign('loginName','');
-//        }
-//        return $this->fetch('shop_login');
+		$SHOP = session('WST_SHOP');
+        if(!empty($SHOP) && isset($SHOP['shopId'])){
+            $this->redirect("shops/index");
+        }
 		$loginName = cookie("loginName");
 		if(!empty($loginName)){
 			$this->assign('loginName',cookie("loginName"));

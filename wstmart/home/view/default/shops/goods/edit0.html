@@ -56,11 +56,11 @@
         <th>商品单位<font color='red'>*</font>：</th>
         <td colspan='2'><input type='text' class='j-ipt' id='goodsUnit' value='{$object["goodsUnit"]}' maxLength='10' data-rule='商品单位:required;'/></td>
     </tr>
-    <tr>
+    <tr style="display: none">
         <th>SEO关键字：</th>
         <td colspan='2'><input type='text' class='j-ipt' id='goodsSeoKeywords' maxLength='100' value='{$object["goodsSeoKeywords"]}' style='width:70%'/></td>
     </tr>
-    <tr>
+    <tr style="display: none">
         <th>商品促销信息：</th>
         <td colspan='2'><textarea class='j-ipt' id='goodsTips' maxLength='100' style='width:500px;height:50px'>{$object["goodsTips"]}</textarea></td>
     </tr>
@@ -74,7 +74,7 @@
             </div>
         </td>
     </tr>
-    <tr>
+    <tr style="display: none">
         <th>商品属性：</th>
         <td colspan='2'>
             <div class="checkbox-box">
@@ -93,7 +93,7 @@
             </div>
         </td>
     </tr>
-    <tr>
+    <tr style="display: none">
         <th>是否包邮：</th>
         <td colspan='2'>
             <div class="radio-box">
@@ -113,7 +113,7 @@
             </select>
         </td>
     </tr>
-    <tr>
+    <tr style="display: none">
         <th>本店分类：</th>
         <td colspan='2'>
             <select id="shopCatId1" class='j-ipt' onchange="getShopsCats('shopCatId2',this.value,'');">
@@ -127,7 +127,7 @@
             </select>
         </td>
     </tr>
-    <tr>
+    <tr style="display: none">
         <th>品牌：</th>
         <td colspan='2'>
             <select id="brandId" class='j-ipt'>

@@ -24,7 +24,7 @@ class Base extends Controller {
             return str_replace("__STYLE__",str_replace('/index.php','',$this->request->root()).'/wstmart/home/view/'.$style,$content);
         });
 		hook('homeControllerBase');
-		
+
 		if(WSTConf('CONF.seoMallSwitch')==0){
 			$this->redirect('home/switchs/index');
 			exit;
@@ -69,21 +69,10 @@ class Base extends Controller {
         	}
         }
     }
-    protected function checkShopAdminAuth(){
-        $USER = session('WST_SHOP_ADMIN');
-        if(empty($USER)){
-            if(request()->isAjax()){
-                die('{"status":-999,"msg":"您还未登录"}');
-            }else{
-                $this->redirect('shop-login');
-                exit;
-            }
-        }
-    }
     //登录验证方法--商家
     protected function checkShopAuth(){
-       	$USER = session('WST_USER');
-        if(empty($USER) || $USER['userType']!=1){
+       	$SHOP = session('WST_SHOP');
+        if(empty($SHOP)){
         	if(request()->isAjax()){
         		die('{"status":-999,"msg":"您还未登录"}');
         	}else{

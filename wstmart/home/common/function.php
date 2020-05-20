@@ -156,7 +156,7 @@ function WSTPathGoodsCat($catId,$data = array()){
  * 处理商家结算信息提示
  */
 function WSTShopMessageBox(){
-	$USER = session('WST_USER');
+	$USER = session('WST_SHOP');
 	$msg = [];
 	if($USER['shopMoney']<0){
 		$msg[] = '您的账户欠费¥'.$USER['shopMoney'].'，请及时充值。';

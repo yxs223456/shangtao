@@ -62,6 +62,7 @@ class Goods extends Base{
 	public function sale(){
 		return $this->fetch('shops/goods/list_sale');
 	}
+
 	/**
 	 * 获取上架商品列表
 	 */
@@ -71,6 +72,7 @@ class Goods extends Base{
 		$rs['status'] = 1;
 		return $rs;
 	}
+
 	/**
 	 * 仓库中商品
 	 */

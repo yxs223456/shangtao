@@ -10,34 +10,14 @@
 	<div class="wst-header wst-color">
     <div class="wst-nav">
 		<ul class="headlf">
-			<li class="drop-info">
-			  <div>欢迎来到{:WSTMSubstr(WSTConf('CONF.mallName'),0,13)}<a href="{:Url('home/users/login')}" onclick="WST.currentUrl();">&nbsp;&nbsp;请&nbsp;登录</a></div>
-			</li>
-			<li class="spacer">|</li>
-			<li class="drop-info">
-			  <div><a href="{:Url('home/users/regist')}" onclick="WST.currentUrl();">免费注册</a></div>
-			</li>
+
 		</ul>
 		<ul class="wst-icon">
-		 <li class="wst-img-icon"></li><li class="wst-remind">欢迎登陆!</li>
+		 <li class="wst-img-icon"></li><li class="wst-remind">欢迎登录!</li>
 	    </ul>
 		<div class="wst-clear"></div>
 	  </div>
 	</div>
-    <div class="wst-login-banner">
-      <div class="wst-icon-banner">
-      	<a href='{$Request.root.true}' title="{:WSTConf('CONF.mallName')}" >
-    	<div class="img-banner" >
-    		<img src="__ROOT__/{:WSTConf('CONF.mallLogo')}">
-    	</div>
-        </a>
-    	<div class="wst-stript"></div>
-    	<div class="wst-login-action">
-    		<div class="wst-left">商家登录</div>
-    		
-    	</div>
-       </div>
-    </div>
 	<div class="wst-login-middle-shop">
 	<div class="wst-container">
 	<div class="wst-login_l_shop">
@@ -80,38 +60,7 @@
 	<div class="wst-clear"></div>
 	</div>
 	</div>
-<div class="wst-footer">
-		<div class="wst-container">
-		<div class="wst-footer-hp-ck3">
-	        <div class="links">
-	           {php}$navs = WSTNavigations(1);{/php}
-	           {volist name="$navs" id='vo'}
-	           <a href="{$vo['navUrl']}" {if $vo['isOpen']==1}target="_blank"{/if}>{$vo['navTitle']}</a>
-	           {if $i< count($navs)}&nbsp;&nbsp;|&nbsp;&nbsp;{/if}
-	           {/volist}
-	        </div>
-	        <div class="copyright">
-	        {php}
-	        	if(WSTConf('CONF.mallFooter')!=''){
-	         		echo htmlspecialchars_decode(WSTConf('CONF.mallFooter'));
-	        	}
-	        {/php}
-	      	{php}
-				if(WSTConf('CONF.visitStatistics')!=''){
-					echo htmlspecialchars_decode(WSTConf('CONF.visitStatistics'))."<br/>";
-			    }
-			{/php}
-	        {if condition="WSTConf('CONF.mallLicense') eq ''"}
-	        <div>
-				Copyright©2016 Powered By <a target="_blank" href="http://www.wstmart.net">WSTMart</a>
-			</div>
-			{else/}
-				<div id="wst-mallLicense" data='1' style="display:none;">Copyright©2016 Powered By <a target="_blank" href="http://www.wstmart.net">WSTMart</a></div>
-	        {/if}
-	        </div>
-	    </div>
-	    </div>
-	  </div>
+
 	  {/block}
 {block name="js"}
     <script type="text/javascript" src="__STATIC__/js/rsa.js"></script>

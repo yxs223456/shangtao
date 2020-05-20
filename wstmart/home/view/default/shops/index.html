@@ -10,13 +10,13 @@
 <div class="wst-shop-info">
 	<span class="wst-shop-img">
 	  <a href="{:url('home/shops/home',array('shopId'=>$data['shop']['shopId']))}">
-	  <img src="__ROOT__/{:WSTImg($data['shop']['shopImg'])}" title="{$data['shop']['shopName']}" alt="{$data['shop']['shopName']}">
+	  <img src="{:WSTImg($data['shop']['shopImg'])}" title="{$data['shop']['shopName']}" alt="{$data['shop']['shopName']}">
 	  </a>
 	</span>
 	<div class="wst-shop-na">
 		<div class="wst-shop-na2">
 		{volist name="$data['shop']['accreds']" id="sv"}
-		<img src="__ROOT__/{$sv['accredImg']}" title='{$sv['accredName']}' alt='{$sv['accredName']}'>
+		<img src="{$sv['accredImg']}" title='{$sv['accredName']}' alt='{$sv['accredName']}'>
 		{/volist}
 		</div>
 		<span class="wst-shop-na3">上次登录：{:session('WST_USER.lastTime')}</span>
@@ -186,19 +186,7 @@
 
 			</li>
 			<li class="mid_r">
-				<div class="mid_r_rtop">
-					<div class="main_title">
-						<div class="wst-lfloat">
-							<span class="tit_label"></span>
-							<span class="c16_555">平台联系方式</span>
-						</div>
-						<div class="wst-clear"></div>
-					</div>
-					<div class="rtop_main">
-						<p class="rtop_item">电话：{:WSTConf('CONF.serviceTel')}</p>
-						<p class="rtop_item">邮箱：{:WSTConf('CONF.serviceEmail')}</p>
-					</div>
-				</div>
+
 				<div class='mid_r_rbottom'>
 					<div class="main_title">
 						<div class="wst-lfloat">

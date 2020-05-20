@@ -45,6 +45,7 @@ class Users extends CUsers{
 	 */
 	public function logout(){
 		session('WST_USER',null);
+		session('WST_SHOP',null);
 		setcookie("loginPwd", null);
 		session('WST_HO_CURRENTURL', null);
 		hook('afterUserLogout');

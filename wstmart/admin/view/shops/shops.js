@@ -166,8 +166,8 @@ function legalCertificateImgUpload (){
 				var json = WST.toAdminJson(f);
 				if(json.status==1){
 				  	$('#legalCertificateImgMsg').empty().hide();
-				    $('#legalCertificateImgPreview').attr('src',WST.conf.ROOT+"/"+json.savePath+json.thumb).show();
-				    $('#legalCertificateImgPreview_a').attr('href',WST.conf.ROOT+"/"+json.savePath+json.name);
+				    $('#legalCertificateImgPreview').attr('src',json.savePath+json.thumb).show();
+				    $('#legalCertificateImgPreview_a').attr('href',json.savePath+json.name);
 				    $('#legalCertificateImg').val(json.savePath+json.name);
 				    $('#msg_legalCertificateImg').hide();
 				}
@@ -186,8 +186,8 @@ function businessLicenceImgUpload(){
 				var json = WST.toAdminJson(f);
 				if(json.status==1){
 					$('#businessLicenceImgMsg').empty().hide();
-					$('#businessLicenceImgPreview').attr('src',WST.conf.ROOT+"/"+json.savePath+json.thumb).show();
-					$('#businessLicenceImgPreview_a').attr('href',WST.conf.ROOT+"/"+json.savePath+json.name);
+					$('#businessLicenceImgPreview').attr('src',json.savePath+json.thumb).show();
+					$('#businessLicenceImgPreview_a').attr('href',json.savePath+json.name);
 					$('#businessLicenceImg').val(json.savePath+json.name);
 					$('#msg_businessLicenceImg').hide();
 				}
@@ -206,8 +206,8 @@ function bankAccountPermitImgUpload(){
 				var json = WST.toAdminJson(f);
 				if(json.status==1){
 					$('#bankAccountPermitImgMsg').empty().hide();
-					$('#bankAccountPermitImgPreview').attr('src',WST.conf.ROOT+"/"+json.savePath+json.thumb).show();
-					$('#bankAccountPermitImgPreview_a').attr('href',WST.conf.ROOT+"/"+json.savePath+json.name);
+					$('#bankAccountPermitImgPreview').attr('src',json.savePath+json.thumb).show();
+					$('#bankAccountPermitImgPreview_a').attr('href',json.savePath+json.name);
 					$('#bankAccountPermitImg').val(json.savePath+json.name);
 					$('#msg_bankAccountPermitImg').hide();
 				}
@@ -226,8 +226,8 @@ function organizationCodeUpload(){
 				var json = WST.toAdminJson(f);
 				if(json.status==1){
 					$('#organizationCodeImgMsg').empty().hide();
-					$('#organizationCodeImgPreview').attr('src',WST.conf.ROOT+"/"+json.savePath+json.thumb).show();
-					$('#organizationCodeImgPreview_a').attr('href',WST.conf.ROOT+"/"+json.savePath+json.name);
+					$('#organizationCodeImgPreview').attr('src',json.savePath+json.thumb).show();
+					$('#organizationCodeImgPreview_a').attr('href',json.savePath+json.name);
 					$('#organizationCodeImg').val(json.savePath+json.name);
 					$('#msg_organizationCodeImg').hide();
 				}
@@ -248,7 +248,7 @@ function taxRegistrationCertificateUpload(){
 					if(json.status==1){
 					  	$('#taxRegistrationCertificateImgMsg').empty().hide();
 					  	var tdiv = $("<div style='width:75px;float:left;margin-right:5px;'><a target='_blank' href='"+json.savePath+json.name+"'>"+
-			                       "<img class='step_pic"+"' width='75' height='75' src='"+WST.conf.ROOT+"/"+json.savePath+json.thumb+"' v='"+json.savePath+json.name+"'></a></div>");
+			                       "<img class='step_pic"+"' width='75' height='75' src='"+json.savePath+json.thumb+"' v='"+json.savePath+json.name+"'></a></div>");
 						var btn = $('<div style="position:relative;top:-80px;left:60px;cursor:pointer;" ><img src="'+WST.conf.ROOT+'/wstmart/home/View/default/img/seller_icon_error.png"></div>');
 						tdiv.append(btn);
 						$('#taxRegistrationCertificateImgBox').append(tdiv);
@@ -284,8 +284,8 @@ function taxpayerQualificationUpload(){
 				var json = WST.toAdminJson(f);
 				if(json.status==1){
 					$('#taxpayerQualificationImgMsg').empty().hide();
-					$('#taxpayerQualificationImgPreview').attr('src',WST.conf.ROOT+"/"+json.savePath+json.thumb).show();
-					$('#taxpayerQualificationImgPreview_a').attr('href',WST.conf.ROOT+"/"+json.savePath+json.name);
+					$('#taxpayerQualificationImgPreview').attr('src',json.savePath+json.thumb).show();
+					$('#taxpayerQualificationImgPreview_a').attr('href',json.savePath+json.name);
 					$('#taxpayerQualificationImg').val(json.savePath+json.name);
 					$('#msg_taxpayerQualificationImg').hide();
 				}
@@ -312,7 +312,7 @@ function initEdit(opts){
 	  		  var json = WST.toAdminJson(f);
 	  		  if(json.status==1){
 	  			$('#uploadMsg').empty().hide();
-	            $('#preview').attr('src',WST.conf.ROOT+"/"+json.savePath+json.thumb);
+	            $('#preview').attr('src',json.savePath+json.thumb);
 	            $('#shopImg').val(json.savePath+json.name);
 	            $('#editFrom').validator('hideMsg', '#shopImg');
 	  		  }

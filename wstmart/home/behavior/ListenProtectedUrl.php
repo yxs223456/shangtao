@@ -1,5 +1,7 @@
 <?php
 namespace wstmart\home\behavior;
+use mysql_xdevapi\BaseResult;
+
 /**
  * ============================================================================
  * WSTMart多用户商城
@@ -25,7 +27,7 @@ class ListenProtectedUrl
         	$menuType = (int)$urls[$visit];
         	$userType = -1;
 			$shopId = (int)session('WST_USER.shopId');
-        	if((int)session('WST_USER.userId')>0)$userType = 0;
+        	if((int)session('WST_SHOP.shopId')>0)$userType = 0;
         	if($shopId>0)$userType = 1;
 
         	//未登录不允许访问受保护的资源
@@ -40,6 +42,7 @@ class ListenProtectedUrl
                 $puser = session('WST_USER');
                 if(isset($puser['shopId'])){
                     $shop = model('Shops')->getFieldsById($shopId,'shopStatus');
+
                     if(empty($shop) || $shop['shopStatus']==-1){
                         model('Users')->logout();
                         if($request->isAjax()){

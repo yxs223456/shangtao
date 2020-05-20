@@ -291,7 +291,7 @@ class Shops extends CShops{
      * 保存入驻资料
      */
     public function saveStep2($data = []){
-        $shopAdminId = (int)session('WST_SHOP_ADMIN.id');
+        $shopAdminId = (int)session('WST_USER.id');
         //判断是否存在入驻申请
         $shops = $this->where('shopAdminId',$shopAdminId)->find();
         //新增入驻申请
@@ -305,9 +305,9 @@ class Shops extends CShops{
                 $data['shopId'] = $this->shopId;
                 $result = Db::name('shop_extras')->insert($data);
                 $shopId = $this->shopId;
-                $WST_SHOP_ADMIN = session('WST_SHOP_ADMIN');
+                $WST_SHOP_ADMIN = session('WST_USER');
                 $WST_SHOP_ADMIN['tempShopId'] = $shopId;
-                session('WST_SHOP_ADMIN',$WST_SHOP_ADMIN);
+                session('WST_USER',$WST_SHOP_ADMIN);
                 Db::commit();
                 return WSTReturn('保存成功',1);
             }else{
@@ -338,7 +338,7 @@ class Shops extends CShops{
             bankAccountPermitImg
             organizationCodeImg
         */
-        $shopId = (int)session('WST_SHOP_ADMIN.tempShopId');
+        $shopId = (int)session('WST_USER.tempShopId');
         if($shopId==0)return WSTReturn('非法的操作');
         $shops = model('shops')->get($shopId);
         if($shops['applyStatus']>=1)return WSTReturn('请勿重复申请入驻');
@@ -383,7 +383,7 @@ class Shops extends CShops{
             taxRegistrationCertificateImg
             taxpayerQualificationImg
         */
-        $shopId = (int)session('WST_SHOP_ADMIN.tempShopId');
+        $shopId = (int)session('WST_USER.tempShopId');
         if($shopId==0)return WSTReturn('非法的操作');
         $shops = model('shops')->get($shopId);
         if($shops['applyStatus']>=1)return WSTReturn('请勿重复申请入驻');
@@ -414,7 +414,7 @@ class Shops extends CShops{
         }
     }
     public function saveStep5($data = []){
-        $shopId = (int)session('WST_SHOP_ADMIN.tempShopId');
+        $shopId = (int)session('WST_USER.tempShopId');
         if($shopId==0)return WSTReturn('非法的操作');
         $shops = model('shops')->get($shopId);
         if($shops['applyStatus']>=1)return WSTReturn('请勿重复申请入驻');
@@ -456,7 +456,7 @@ class Shops extends CShops{
      * 获取商家入驻资料
      */
     public function getShopApply(){
-        $shopAdminid = (int)session('WST_SHOP_ADMIN.id');
+        $shopAdminid = (int)session('WST_USER.id');
         $rs = $this->alias('s')->join('__SHOP_EXTRAS__ ss','s.shopId=ss.shopId','inner')
                    ->where('s.shopAdminId',$shopAdminid)
                    ->find();
