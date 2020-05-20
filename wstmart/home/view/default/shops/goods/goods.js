@@ -408,12 +408,12 @@ function addSpecSaleCol(){
 	}
 	$('#spec-sale-tby').append(html.join(''));
 	//判断是否禁用商品价格和库存字段
-	if($('#spec-sale-tby').html()!=''){
-		$('#goodsStock').prop('disabled',true);
-		$('#shopPrice').prop('disabled',true);
-		$('#marketPrice').prop('disabled',true);
-		$('#warnStock').prop('disabled',true);
-	}
+	// if($('#spec-sale-tby').html()!=''){
+	// 	$('#goodsStock').prop('disabled',true);
+	// 	$('#shopPrice').prop('disabled',true);
+	// 	$('#marketPrice').prop('disabled',true);
+	// 	$('#warnStock').prop('disabled',true);
+	// }
 	//设置销售规格表值
 	if(OBJ.saleSpec)fillSepcSale();
 }

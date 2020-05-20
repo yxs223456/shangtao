@@ -29,13 +29,13 @@ $(function() {
 {block name="header"}
 	
 <div class='wst-lite-bac'>
-<div class='wst-lite-container'>
+<div class='wst-lite-container' style="display: none">
    <div class="wst-lite-tit"><span>卖家中心</span></div>
    <div class="wst-lite-sea">
       <div class='search'>
       	  <input type="hidden" id="search-type" value="{:isset($keytype)?1:0}"/>
 
-      	  <ul class="j-search-box">
+      	  <ul class="j-search-box" >
             <li class="j-search-type">
               搜<span>{if isset($keytype)}店铺{else}商品{/if}</span>&nbsp;<i class="arrow"> </i>
             </li>

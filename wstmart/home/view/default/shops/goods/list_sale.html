@@ -105,10 +105,10 @@
         </td>
       {{# } }}
       <td>
-         <a class="g-handle" target='_blank' href='{{WST.U("home/goods/detail","goodsId="+d[i]['goodsId']+"&key="+d[i]['verfiycode'])}}'>[查看]</a>
+         <!--<a class="g-handle" target='_blank' href='{{WST.U("home/goods/detail","goodsId="+d[i]['goodsId']+"&key="+d[i]['verfiycode'])}}'>[查看]</a>-->
          <a class="g-handle" href='javascript:toEdit({{d[i]['goodsId']}},"sale")'>[编辑]</a>
          {{# if(d[i]['goodsType']==1){}}
-         <a class="g-handle" href='javascript:toStock({{d[i]['goodsId']}},"sale")'>[卡券]</a>
+         <!--<a class="g-handle" href='javascript:toStock({{d[i]['goodsId']}},"sale")'>[卡券]</a>-->
          {{#}}}
          <a class="g-handle" href='javascript:del({{d[i]['goodsId']}},"sale")'>[删除]</a>
       </td>

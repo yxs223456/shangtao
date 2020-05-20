@@ -62,7 +62,7 @@
              <td>
               <div class="goods-img">
                 <a href="{{WST.U("home/goods/detail","goodsId="+d[i]['goodsId']+"&key="+d[i]['verfiycode'])}}">
-                  <img class='j-lazyGoodsImg'  data-original='__ROOT__/{{d[i].goodsImg}}'/>
+                  <img class='j-lazyGoodsImg'  data-original='{{d[i].goodsImg}}'/>
                 </a>
               </div>
               <p class="goodsName">
@@ -72,7 +72,6 @@
              <td>{{d[i]['goodsSn']}}</td>
              <td>{{d[i]['illegalRemarks']}}</td>
              <td>
-                <a class="g-handle" target='_blank' href='{{WST.U("home/goods/detail","goodsId="+d[i]['goodsId']+"&key="+d[i]['verfiycode'])}}'>[查看]</a>
                 <a class="g-handle" href='javascript:toEdit({{d[i]['goodsId']}},"illegal")'>[编辑]</a>
                 <a class="g-handle" href='javascript:del({{d[i]['goodsId']}},"illegal")'>[删除]</a>
              </td>

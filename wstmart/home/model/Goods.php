@@ -157,6 +157,8 @@ class Goods extends CGoods{
 		$shopId = (int)session('WST_USER.shopId');
 		$data = input('post.');
 		$specsIds = input('post.specsIds');
+        if(empty($specsIds))return WSTReturn('商品规格不能为空');
+        if(empty($data["gallery"]))return WSTReturn('商品相册不能为空');
 		WSTUnset($data,'goodsId,statusRemarks,goodsStatus,dataFlag');
 		if(isset($data['goodsName'])){
 			if(!WSTCheckFilterWords($data['goodsName'],WSTConf("CONF.limitWords"))){
@@ -184,8 +186,9 @@ class Goods extends CGoods{
 		$data['shopId'] = $shopId;
 		$data['saleTime'] = date('Y-m-d H:i:s');
 		$data['createTime'] = date('Y-m-d H:i:s');
-		$goodsCats = model('GoodsCats')->getParentIs($data['goodsCatId']);		
+		$goodsCats = model('GoodsCats')->getParentIs($data['goodsCatId']);
 		$data['goodsCatIdPath'] = implode('_',$goodsCats)."_";
+        $data["firstGoodsCatId"] = $goodsCats[count($goodsCats)-1];
 		if($data['goodsType']==0){
 			$data['isSpec'] = ($specsIds!='')?1:0;
 		}else{
@@ -319,7 +322,9 @@ class Goods extends CGoods{
 		$shopId = (int)session('WST_USER.shopId');
 	    $goodsId = input('post.goodsId/d');
 	    $specsIds = input('post.specsIds');
+        if(empty($specsIds))return WSTReturn('商品规格不能为空');
 		$data = input('post.');
+        if(empty($data["gallery"]))return WSTReturn('商品相册不能为空');
 		WSTUnset($data,'goodsId,dataFlag,statusRemarks,goodsStatus,createTime');
 		$ogoods = $this->where(['goodsId'=>$goodsId,'shopId'=>$shopId,'dataFlag'=>1])->field('goodsImg,goodsStatus,goodsType')->find();
 		if(empty($ogoods))return WSTReturn('商品不存在');
@@ -351,6 +356,7 @@ class Goods extends CGoods{
 		$data['saleTime'] = date('Y-m-d H:i:s');
 		$goodsCats = model('GoodsCats')->getParentIs($data['goodsCatId']);
 		$data['goodsCatIdPath'] = implode('_',$goodsCats)."_";
+        $data["firstGoodsCatId"] = $goodsCats[count($goodsCats)-1];
 		if($data['goodsType']==0){
 		    $data['isSpec'] = ($specsIds!='')?1:0;
 	    }else{
