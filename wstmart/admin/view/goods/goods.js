@@ -5,8 +5,8 @@ function initSaleGrid(){
             {title:'&nbsp;', name:'goodsImg', width: 30, renderer: function(val,item,rowIndex){
             	var thumb = item['goodsImg'];
 	        	thumb = thumb.replace('.','_thumb.');
-            	return "<span class='weixin'><img id='img' onmouseout='toolTip()' onmouseover='toolTip()' style='height:60px;width:60px;' src='"+WST.conf.ROOT+"/"+thumb
-            	+"'><span class='imged' ><img  style='height:180px;width:180px;' src='"+WST.conf.ROOT+"/"+item['goodsImg']+"'></span></span>";
+            	return "<span class='weixin'><img id='img' onmouseout='toolTip()' onmouseover='toolTip()' style='height:60px;width:60px;' src='"+thumb
+            	+"'><span class='imged' ><img  style='height:180px;width:180px;' src='"+item['goodsImg']+"'></span></span>";
             }},
             {title:'商品名称', name:'goodsName', width: 160,sortable:true,renderer: function(val,item,rowIndex){
                 return "<span  ><p class='wst-nowrap'>"+item['goodsName']+"</p></span>";
@@ -91,7 +91,7 @@ function initAuditGrid(){
     var cols = [
             {title:'商品ID', name:'goodsId' ,width:30,sortable:true},
             {title:'&nbsp;', name:'goodsName', width: 30, renderer: function(val,item,rowIndex){
-            	return "<span class='weixin'><img class='img' style='height:60px;width:60px;' src='"+WST.conf.ROOT+"/"+item['goodsImg']+"'><img class='imged' style='height:200px;width:200px;' src='"+WST.conf.ROOT+"/"+item['goodsImg']+"'></span>";
+            	return "<span class='weixin'><img class='img' style='height:60px;width:60px;' src='"+item['goodsImg']+"'><img class='imged' style='height:200px;width:200px;' src='"+item['goodsImg']+"'></span>";
             }},
             {title:'商品名称', name:'goodsName', width: 160,sortable:true,renderer: function(val,item,rowIndex){
                 return "<span  ><p class='wst-nowrap'>"+item['goodsName']+"</p></span>";
@@ -204,7 +204,7 @@ function initIllegalGrid(){
     var h = WST.pageHeight();
     var cols = [
             {title:'&nbsp;', name:'goodsName', width: 30, renderer: function(val,item,rowIndex){
-            	return "<span class='weixin'><img class='img' style='height:60px;width:60px;' src='"+WST.conf.ROOT+"/"+item['goodsImg']+"'><img class='imged' style='height:200px;width:200px;' src='"+WST.conf.ROOT+"/"+item['goodsImg']+"'></span>";
+            	return "<span class='weixin'><img class='img' style='height:60px;width:60px;' src='"+item['goodsImg']+"'><img class='imged' style='height:200px;width:200px;' src='"+item['goodsImg']+"'></span>";
             }},
             {title:'商品名称', name:'goodsName', width: 100,sortable:true,renderer: function(val,item,rowIndex){
                 return "<span  ><p class='wst-nowrap'>"+item['goodsName']+"</p></span>";
