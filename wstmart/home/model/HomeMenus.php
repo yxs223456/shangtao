@@ -21,6 +21,7 @@ class HomeMenus extends CHomeMenus{
 	 */
 	public function getMenus(){
 		$data = cache('WST_HOME_MENUS');
+//		$data = null;
 		if(!$data){
 			$rs = $this->where(['isShow'=>1,'dataFlag'=>1])
 			        ->field('menuId,parentId,menuName,menuUrl,menuType')->order('menuSort asc,menuId asc')->select();
@@ -62,7 +63,7 @@ class HomeMenus extends CHomeMenus{
 	 */
 	public function getShopMenus(){
 		$m1 = $this->getMenus();
-		$userType = (int)session('WST_USER.userType');
+		$userType = 1;
 		$menuUrls = array();
 		if($userType==1){
 			$shopId = (int)session('WST_USER.shopId');

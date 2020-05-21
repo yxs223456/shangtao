@@ -22,7 +22,7 @@
              <div class='wst-complain-order-goods'>
              {volist name="$data['goodsList']" id="goods" key='key2'}
               <a target='_blank' href="{:Url('Home/Goods/Detail',array('goodsId'=>$goods['goodsId']))}" title="{$goods['goodsName']}">
-              <img data-original="__ROOT__/{$goods['goodsImg']}" height="55" width="55" class='gImg'/>
+              <img data-original="{$goods['goodsImg']}" height="55" width="55" class='gImg'/>
               </a>
              {/volist}
              </div>

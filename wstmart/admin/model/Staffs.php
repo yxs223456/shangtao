@@ -70,6 +70,8 @@ class Staffs extends Base{
 		 		}
 	 		}
 	 		session("WST_STAFF",$staff);
+	 		$shop = Db::name("shops")->where("isSelf", 1)->find();
+	 		session("WST_SHOP", $shop);
 			return WSTReturn("",1,$staff);
 		}
 		return WSTReturn('账号或密码错误!');

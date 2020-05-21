@@ -927,7 +927,7 @@ WST.recordClick = function(adId){
  * 获取用户信息
  */
 WST.getSysMessages = function(val){
-	if(WST.conf.IS_LOGIN==0)return;
+	// if(WST.conf.IS_LOGIN==0)return;
 	$.post(WST.U('home/index/getSysMessages'),{tasks:val},function(data){
 		var json = WST.toJson(data);
 		if(json.message){

@@ -45,6 +45,8 @@ class Index extends Base{
      */
     public function logout(){
     	session('WST_STAFF',null);
+        session("WST_SHOP", null);
+        session("WST_USER", null);
     	return WSTReturn("退出成功，正在跳转页面", 1);
     }
     

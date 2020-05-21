@@ -21,9 +21,8 @@ use think\Loader;
 
 class Shops extends Base{
     protected $beforeActionList = [
-          'checkShopAuth' =>  ['only'=>'editinfo,getshopmoney'],
-          'checkAuth'=>['only'=>''],
-          'checkShopAdminAuth'=>['only'=>'join,joinstep1,joinstep2,savestep2,joinstep3,savestep3,joinstep4,savestep4,joinstep5,savestep5,joinsuccess'],
+          'checkShopAuth' =>  ['only'=>'editinfo,getshopmoney,index'],
+          'checkAuth'=>['only'=>'join,joinstep1,joinstep2,savestep2,joinstep3,savestep3,joinstep4,savestep4,joinstep5,savestep5,joinsuccess']
     ];
     /**
     * 店铺公告页
