@@ -96,19 +96,18 @@
        <td>
        <div id='shopImgPicker'>上传店铺图标</div><span id='uploadMsg'></span><span class='msg-box' id='msg_shopImg'></span>
        {if $object["shopImg"]!=''}
-       <img id='preview' width='150' height='150' src='__ROOT__/{$object["shopImg"]}'/>
+       <img id='preview' width='150' height='150' src='{$object["shopImg"]}'/>
        {else}
        <img id='preview' width='150' height='150' src="__ROOT__/{:WSTConf('CONF.shopLogo')}"/>
        {/if}
        <input type="hidden" id='shopImg' class='ipt' value="{$object['shopImg']}" data-rule="店铺图标: required;" data-target='#msg_shopImg'/>
        </td>
     </tr>
-    <tr>
+    <tr style="display: none">
        <th>客服QQ：</th>
        <td><input type="text" id='shopQQ' class='ipt' value="{$object['shopQQ']}" maxLength='200'/><span style='color:gray;'>做为客服接收临时消息的QQ,需开通<a target="_blank" href="http://shang.qq.com/v3/index.html">QQ推广功能</a> -> '首页'-> '推广工具'-> '立即免费开通'</span></td>
-
     </tr>
-    <tr>
+    <tr style="display: none">>
        <th>阿里旺旺：</th>
        <td><input type="text" id='shopWangWang' class='ipt' value="{$object['shopWangWang']}" maxLength='200'/></td>
     </tr>

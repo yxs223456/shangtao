@@ -10,7 +10,7 @@
         </td>
         <td rowspan='6'>
             <div id='goodsImgBox'>
-                <img src='{if $object["goodsImg"]!=''}{$object["goodsImg"]}{else}{:WSTConf('CONF.goodsLogo')}{/if}' id='preview' width='150' height='150'>
+                <img src='{if $object["goodsImg"]!=''}{$object["goodsImg"]}{else}{/if}' id='preview' width='150' height='150'>
             </div>
             <div id='goodsImgPicker'>请上传商品图片</div><span id='uploadMsg'></span>
             <input type='hidden' id='goodsImg' class='j-ipt' data-target='#msg_goodsImg' value='{if $object["goodsId"]>0}{$object["goodsImg"]}{/if}' data-rule="商品图片: required;"/>
@@ -113,7 +113,7 @@
             </select>
         </td>
     </tr>
-    <tr style="display: none">
+    <tr>
         <th>本店分类：</th>
         <td colspan='2'>
             <select id="shopCatId1" class='j-ipt' onchange="getShopsCats('shopCatId2',this.value,'');">

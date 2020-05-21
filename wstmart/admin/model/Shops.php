@@ -624,6 +624,8 @@ class Shops extends Base{
             $data['applyStatus'] = 2;
             $this->allowField(true)->save($data);
             $shopId = $this->shopId;
+            model("shop_admin")->shopId = $shopId;
+            model("shop_admin")->save();
             //启用上传图片
             WSTUseImages(1, $shopId, $data['shopImg']);
             //保存店铺其他信息
