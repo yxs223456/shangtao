@@ -102,7 +102,8 @@ class Menus extends Base{
 		$STAFF = session('WST_STAFF');
 		$datas  = [];
 		$dbo = $this->alias('m')->join('__PRIVILEGES__ p','m.menuId= p.menuId and isMenuPrivilege=1 and p.dataFlag=1','left')
-			->where('m.dataFlag','=',1);
+			->where('m.dataFlag','=',1)
+			->where('m.isShow','=',1);
 		if((int)$STAFF['staffId']!=1){
 			$dbo->where([['m.menuId','in',$STAFF['menuIds']]]);
 		}	

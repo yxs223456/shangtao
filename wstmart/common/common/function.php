@@ -940,7 +940,7 @@ function WSTEditUpload($fromType){
     	$filePath = str_replace(Env::get('root_path'),'',$filePath);
     	$filePath = str_replace('\\','/',$filePath);
 
-        $filename = $info->getFilename();
+        $filename = date("ymd"). "/" . $info->getFilename();
         $fileContent = file_get_contents(\think\facade\Env::get('root_path') . $filePath);
         $fileUrl = \wstmart\common\helper\AliyunOss::putObject($filename, $fileContent);
         unlink(\think\facade\Env::get('root_path') . $filePath);
