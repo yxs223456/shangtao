@@ -26,8 +26,8 @@
             <span class='msg-box' id='msg_taxRegistrationCertificateImg'>
               {volist name="$object['taxRegistrationCertificateImgVO']" id='vo'}
               <div style="width:75px;float:left;margin-right:5px;">
-                <a href='__ROOT__/{$vo}' target='_blank'>
-                <img class="step_pic" width="75" height="75" src="__ROOT__/{$vo}" v="{$vo}">
+                <a href='{$vo}' target='_blank'>
+                <img class="step_pic" width="75" height="75" src="{$vo}" v="{$vo}">
                 </a>
                 <div style="position:relative;top:-80px;left:60px;cursor:pointer;" onclick='javascript:delVO(this)'>
                   <img src="__ROOT__/wstmart/home/View/default/img/seller_icon_error.png">
@@ -44,8 +44,8 @@
           <input type='hidden' id='taxpayerQualificationImg' class='ipt' value='{$object["taxpayerQualificationImg"]}'/>
           <div id='taxpayerQualificationImgPicker'>请上传法人证件电子版</div>
           <span id='taxpayerQualificationImgMsg'></span>
-          <a id='taxpayerQualificationImgPreview_a' href='__ROOT__/{$object["taxpayerQualificationImg"]}' target='_blank'>
-          <img id='taxpayerQualificationImgPreview' src='__ROOT__/{$object["taxpayerQualificationImg"]}' {if $object["taxpayerQualificationImg"]==''}style='display:none'{/if} width='150'>
+          <a id='taxpayerQualificationImgPreview_a' href='{$object["taxpayerQualificationImg"]}' target='_blank'>
+          <img id='taxpayerQualificationImgPreview' src='{$object["taxpayerQualificationImg"]}' {if $object["taxpayerQualificationImg"]==''}style='display:none'{/if} width='150'>
           </a>
       </td>
   </tr>

@@ -6,12 +6,10 @@
 </style>
 {/block}
 {block name="content"}
-<div class='wst-shop-name'><a href='{:Url("home/shops/home","shopId=".$data["shop"]["shopId"])}'>{$data['shop']['shopName']}</a></div>
+<div class='wst-shop-name'><a href='#'>{$data['shop']['shopName']}</a></div>
 <div class="wst-shop-info">
 	<span class="wst-shop-img">
-	  <a href="{:url('home/shops/home',array('shopId'=>$data['shop']['shopId']))}">
 	  <img src="{:WSTImg($data['shop']['shopImg'])}" title="{$data['shop']['shopName']}" alt="{$data['shop']['shopName']}">
-	  </a>
 	</span>
 	<div class="wst-shop-na">
 		<div class="wst-shop-na2">
@@ -176,7 +174,7 @@
 							<li class="c14_ff66">
 								<div class="gTop{$gkey} top-num">{$gkey}</div>
 							</li>
-							<li class="wst-textover"><a class="c14_ff90" target="_blank" href="{:url('home/goods/detail',['goodsId'=>$glist.goodsId])}">{:WSTMSubstr($glist.goodsName,0,15)}</a></li>
+							<li class="wst-textover">{:WSTMSubstr($glist.goodsName,0,15)}</li>
 							<li class="c14_ff66">{$glist.goodsNum?:0}</li>
 						</ul>
 						{/volist}

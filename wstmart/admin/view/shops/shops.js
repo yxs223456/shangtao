@@ -16,7 +16,7 @@ function initGrid(){
                 var h = "";
 	            if(WST.GRANT.DPGL_02)h += "<a class='btn btn-blue' href='javascript:toEdit(" + item['shopId'] + ")'><i class='fa fa-pencil'></i>修改</a> ";
 	            if(WST.GRANT.DPGL_03 && item['shopId']!=1)h += "<a class='btn btn-red' href='javascript:toDel(" + item['shopId'] + ")'><i class='fa fa-trash-o'></i>删除</a> "; 
-	            h += "<a class='btn btn-blue' href='"+WST.U('admin/logmoneys/tologmoneys','id='+item['shopId'])+"&type=1'><i class='fa fa-search'></i>商家资金</a>";
+	            // h += "<a class='btn btn-blue' href='"+WST.U('admin/logmoneys/tologmoneys','id='+item['shopId'])+"&type=1'><i class='fa fa-search'></i>商家资金</a>";
 	            return h;
             }}
             ];

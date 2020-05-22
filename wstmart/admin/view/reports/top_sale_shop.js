@@ -10,8 +10,8 @@ function initSaleGrid(){
     var h = WST.pageHeight();
     var cols = [
             {title:'&nbsp;', name:'shopImg', width: 30, renderer:function(val,item,rowIndex){
-                return "<span class='weixin'><img id='img' onmouseout='toolTip()' onmouseover='toolTip()' style='height:60px;width:60px;' src='"+WST.conf.ROOT+"/"+item['shopImg']
-            	+"'><span class='imged' ><img  style='height:180px;width:180px;' src='"+WST.conf.ROOT+"/"+item['shopImg']+"'></span></span>";
+                return "<span class='weixin'><img id='img' onmouseout='toolTip()' onmouseover='toolTip()' style='height:60px;width:60px;' src='"+item['shopImg']
+            	+"'><span class='imged' ><img  style='height:180px;width:180px;' src='"+item['shopImg']+"'></span></span>";
             }},
             {title:'店铺', name:'shopName', width: 130},
             {title:'销售额', name:'totalMoney', width: 130, renderer:function(val,item,rowIndex){return '￥'+val;}},

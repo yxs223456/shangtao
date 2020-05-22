@@ -11,12 +11,11 @@ function initSaleGrid(){
     var cols = [
             {title:'&nbsp;', name:'goodsName', width: 30, renderer: function(val,item,rowIndex){
             	var thumb = item['goodsImg'];
-	        	thumb = thumb.replace('.','_thumb.');
-                return "<span class='weixin'><a target='_blank' href='"+WST.U("home/goods/detail","goodsId="+item['goodsId'])+"'><img id='img' onmouseout='toolTip()' onmouseover='toolTip()' style='height:60px;width:60px;' src='"+WST.conf.ROOT+"/"+thumb
-            	+"'><span class='imged' ><img  style='height:180px;width:180px;' src='"+WST.conf.ROOT+"/"+item['goodsImg']+"'></span></span>";
+                return "<span class='weixin'><img id='img' onmouseout='toolTip()' onmouseover='toolTip()' style='height:60px;width:60px;' src='"+thumb
+            	+"'><span class='imged' ><img  style='height:180px;width:180px;' src='"+item['goodsImg']+"'></span></span>";
             }},
             {title:'商品名称', name:'goodsName', width: 430, renderer: function(val,item,rowIndex){
-                return "<a style='color:blue' target='_blank' href='"+WST.U("home/goods/detail","goodsId="+item['goodsId'])+"'>"+item['goodsName']+"</a>";
+                return item['goodsName'];
             }},
             {title:'商品编号', name:'goodsSn', width: 80},
             {title:'所属店铺', name:'shopName', width: 150},

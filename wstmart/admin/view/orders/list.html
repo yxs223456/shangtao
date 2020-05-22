@@ -16,7 +16,7 @@
   <option value="{$vo['areaId']}">{$vo['areaName']}</option>
   {/volist}
 </select>
-<select id='orderCode' class='j-ipt'>
+<select id='orderCode' class='j-ipt' style="display: none">
  <option value=''>订单来源</option>
  {volist name=":WSTOrderModule()" id="om"}
  <option value="{$om['name']}">{$om['name']}</option>

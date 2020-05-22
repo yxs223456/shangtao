@@ -152,7 +152,7 @@
          </tr>
          <tr>
            <th>收货地址：</th>
-           <td>{$object['userAddress']}</td>
+           <td>{$object['areaPath']} {$object['userAddress']}</td>
          </tr>
          <tr>
             <th>联系方式：</th>
@@ -172,16 +172,7 @@
        <div class='goods-item'>
           <div class='shop'>
           {$object['shopName']}
-          {if $object['shopQQ'] !=''}
-          <a href="tencent://message/?uin={$object['shopQQ']}&Site=QQ交谈&Menu=yes">
-			  <img border="0" style='vertical-align:middle;' src="{:WSTProtocol()}wpa.qq.com/pa?p=1:{$object['shopQQ']}:7" alt="QQ交谈" width="71" height="24" />
-		  </a>
-          {/if}
-          {if $object['shopWangWang'] !=''}
-          <a target="_blank" href="{:WSTProtocol()}www.taobao.com/webww/ww.php?ver=3&touid={$object['shopWangWang']}&siteid=cntaobao&status=1&charset=utf-8">
-			  <img border="0" style='vertical-align:middle;' src="{:WSTProtocol()}amos.alicdn.com/realonline.aw?v=2&uid={$object['shopWangWang']}&site=cntaobao&s=1&charset=utf-8" alt="和我联系" />
-		  </a>
-          {/if}
+
           </div>
           <div class='goods-list'>
              {volist name='$object["goods"]' id='vo2'}
@@ -189,9 +180,7 @@
              <div class='item j-g{$vo2['goodsId']}'>
 		        <div class='goods'>
 		            <div class='img'>
-		                <a href='{:Url("home/goods/detail","goodsId=".$vo2["goodsId"])}' target='_blank'>
-			            <img src='__ROOT__/{$vo2["goodsImg"]}' width='80' height='80' title='{$vo2["goodsName"]}'/>
-			            </a>
+			            <img src='{$vo2["goodsImg"]}' width='80' height='80' title='{$vo2["goodsName"]}'/>
 		            </div>
 		            <div class='name'>{if $vo2["goodsCode"]=='gift'}【赠品】{/if}{$vo2["goodsName"]}</div>
 		            <div class='spec'>{:str_replace('@@_@@','<br/>',$vo2["goodsSpecNames"])}</div>
