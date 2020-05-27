@@ -548,3 +548,27 @@ function mapCity(){
         }
     });
 }
+
+/**
+ *  切换结算账户表单
+ * @param obj
+ */
+function changeSettle(obj) {
+    console.log(obj.value);
+    var settleType = obj.value;
+    if (settleType == "alipay") {
+        $('.changeSettleBank').hide();
+        $('.changeSettleWx').hide();
+        $('.changeSettleAli').show();
+
+    } else if (settleType == "wx" || settleType == "wx_pub" || settleType == "wx_lite") {
+        $('.changeSettleBank').hide();
+        $('.changeSettleAli').hide();
+        $('.changeSettleWx').show();
+    } else if (settleType == 'bank_account') {
+        $('.changeSettleAli').hide();
+        $('.changeSettleWx').hide();
+        $('.changeSettleBank').show();
+    }
+
+}

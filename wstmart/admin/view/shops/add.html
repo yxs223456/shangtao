@@ -415,39 +415,104 @@
 <fieldset class="layui-elem-field layui-field-title">
   <legend>结算账号信息</legend>
     <table class='wst-form wst-box-top'>
-  <tr>
-      <th width='150'>银行开户名<font color='red'>*</font>：</th>
-      <td>
+    <tr>
+        <th width='150'>结算账户类型<font color='red'>*</font>：</th>
+        <td>
+            <select id='settleType' class='ipt' onchange="changeSettle(this)" data-rule='结算账户类型:required;'>
+                {volist name=":WSTDatas('SETTLE_TYPE')" id='vo'}
+                <option value='{$vo["dataVal"]}'>{$vo["dataName"]}</option>
+                {/volist}
+            </select>
+        </td>
+    </tr>
+    <tr class="changeSettleBank">
+        <th width='150'>银行开户名<font color='red'>*</font>：</th>
+        <td>
             <input type='text' id='bankUserName' class='ipt' maxlength='50' data-rule='银行开户名:required;'/>
-      </td>
-  </tr>
-  <tr>
-      <th>对公结算银行账号<font color='red'>*</font>：</th>
-      <td>
+        </td>
+    </tr>
+    <tr class="changeSettleBank">
+        <th>对公结算银行账号<font color='red'>*</font>：</th>
+        <td>
             <input type='text' id='bankNo' class='ipt' maxlength='20' data-rule='对公结算银行账号:required;'/>
-      </td>
-  </tr>
-  <tr>
-      <th>开户银行名称<font color='red'>*</font>：</th>
-      <td>
-          <select id='bankId' id='bankId' class='ipt' data-rule='对公结算银行账号:required;'>
-              {foreach $bankList as $v}
-              <option value="{$v['bankId']}">{$v['bankName']}</option>
-              {/foreach}
-          </select>
-      </td>
-  </tr>
-  <tr>
-      <th>开户银行支行所在地<font color='red'>*</font>：</th>
-      <td>
-          <select id="barea_0" class='j-bareas' level="0" onchange="WST.ITAreas({id:'barea_0',val:this.value,isRequire:true,className:'j-bareas'});">
-            <option value="">-请选择-</option>
-            {foreach $areaList as $v}
-              <option value="{$v['areaId']}">{$v['areaName']}</option>
-            {/foreach}
-          </select>
-      </td>
-  </tr>
+        </td>
+    </tr>
+    <tr class="changeSettleBank">
+        <th>转账类型<font color='red'>*</font>：</th>
+        <td>
+            <select id='transferType' class='ipt' data-rule='转账类型:required;'>
+                {volist name=":WSTDatas('TRANSFER_TYPE')" id='vo'}
+                <option value='{$vo["dataVal"]}'>{$vo["dataName"]}</option>
+                {/volist}
+            </select>
+        </td>
+    </tr>
+    <tr class="changeSettleBank">
+        <th>开户银行名称<font color='red'>*</font>：</th>
+        <td>
+            <select id='bankId' class='ipt' data-rule='对公结算银行账号:required;'>
+                {foreach $bankList as $v}
+                <option value="{$v['bankId']}">{$v['bankName']}</option>
+                {/foreach}
+            </select>
+        </td>
+    </tr>
+    <tr class="changeSettleBank">
+        <th>开户银行编号<font color='red'>*</font>：</th>
+        <td>
+            <input type='text' id='openBankCode' class='ipt' maxlength='20' data-rule='开户银行编号:required;'/>
+        </td>
+    </tr>
+    <tr class="changeSettleBank">
+        <th>开户银行支行所在地<font color='red'>*</font>：</th>
+        <td>
+            <select id="barea_0" class='j-bareas' level="0" onchange="WST.ITAreas({id:'barea_0',val:this.value,isRequire:true,className:'j-bareas'});">
+                <option value="">-请选择-</option>
+                {foreach $areaList as $v}
+                <option value="{$v['areaId']}">{$v['areaName']}</option>
+                {/foreach}
+            </select>
+        </td>
+    </tr>
+
+
+    <tr class="changeSettleAli" style="display: none;">
+        <th>支付宝账号<font color='red'>*</font>：</th>
+        <td>
+            <input type='text' id='aliAccount' class='ipt' maxlength='50' data-rule='支付宝账号:required;'/>
+        </td>
+    </tr>
+    <tr class="changeSettleAli" style="display: none;">
+        <th>姓名<font color='red'>*</font>：</th>
+        <td>
+            <input type='text' id='aliName' class='ipt' maxlength='50' data-rule='姓名:required;'/>
+        </td>
+    </tr>
+    <tr class="changeSettleAli" style="display: none;">
+        <th>转账类型<font color='red'>*</font>：</th>
+        <td>
+            <select id='aliTransferType' class='ipt' data-rule='转账类型:required;'>
+                {volist name=":WSTDatas('TRANSFER_TYPE')" id='vo'}
+                <option value='{$vo["dataVal"]}'>{$vo["dataName"]}</option>
+                {/volist}
+            </select>
+        </td>
+    </tr>
+    <tr class="changeSettleAli" style="display: none;">
+        <th>收款方账户类型：</th>
+        <td>
+            <input type='text' id='accountType' class='ipt' maxlength='50'/>
+        </td>
+    </tr>
+
+
+    <tr class="changeSettleWx" style="display: none;">
+        <th>微信OpenID<font color='red'>*</font>：</th>
+        <td>
+            <input type='text' id='wxOpenId' class='ipt' maxlength='50' data-rule='微信OpenID:required;'/>
+        </td>
+    </tr>
+
   <tr>
        <td colspan='2' align='center'>
          <button type="button"  class='btn btn-primary btn-mright b' onclick='javascript:add()'><i class="fa fa-check"></i>保存</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
