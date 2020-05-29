@@ -82,11 +82,11 @@ class Shops extends Validate{
     
     protected $scene = [
         'add'   =>  ['shopSn','userPhone','pwd','shopName','shopCompany','longitude','latitude','shopkeeper','telephone','shopCompany','shopTel','isSelf','shopImg',
-                     'areaId','shopAddress','isInvoice','shopAtive','bankId','bankAreaId','bankNo','bankUserName','shopAtive'],
+                     'areaId','shopAddress','isInvoice','shopAtive','shopAtive'],
         'edit'  =>  ['shopSn','userPhone','pwd','shopName','shopCompany','shopkeeper','telephone','shopCompany','shopTel','isSelf','shopImg',
-                     'areaId','shopAddress','isInvoice','shopAtive','bankId','bankAreaId','bankNo','bankUserName','shopAtive'],
+                     'areaId','shopAddress','isInvoice','shopAtive','shopAtive'],
         'handleApply'  =>  ['shopSn','userPhone','shopName','shopCompany','shopkeeper','telephone','shopCompany','shopTel','isSelf','shopImg',
-                     'areaId','shopAddress','isInvoice','shopAtive','bankId','bankAreaId','bankNo','bankUserName','shopAtive']
+                     'areaId','shopAddress','isInvoice','shopAtive','shopAtive']
     ]; 
     
     protected function checkShopSn($value){

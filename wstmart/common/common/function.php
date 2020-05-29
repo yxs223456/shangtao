@@ -12,6 +12,7 @@
  * ============================================================================
  */
 include_once(\think\facade\Env::get('root_path') . "wstmart/common/hepler/AliyunOss.php");
+include_once(\think\facade\Env::get('root_path') . "wstmart/common/hepler/Ping.php");
 use think\Db;
 
 

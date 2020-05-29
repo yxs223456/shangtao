@@ -63,7 +63,8 @@ class Shops extends Base{
     	$data['goodsCatList'] = model('goodsCats')->listQuery(0);
     	$data['accredList'] = model('accreds')->listQuery(0);
     	$data['bankList'] = model('banks')->listQuery();
-    	$data['areaList'] = model('areas')->listQuery(0);  
+    	$data['areaList'] = model('areas')->listQuery(0);
+    	$data['settleData'] = model('pingSettles')->getSettles($id);
         if($id>0){
         	return $this->fetch("edit",$data);
         }else{

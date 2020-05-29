@@ -425,22 +425,24 @@
             </select>
         </td>
     </tr>
+
+    <!--银行结算参数-->
     <tr class="changeSettleBank">
         <th width='150'>银行开户名<font color='red'>*</font>：</th>
         <td>
-            <input type='text' id='bankUserName' class='ipt' maxlength='50' data-rule='银行开户名:required;'/>
+            <input type='text' id='bankUserName' class='ipt' maxlength='50'/>
         </td>
     </tr>
     <tr class="changeSettleBank">
         <th>对公结算银行账号<font color='red'>*</font>：</th>
         <td>
-            <input type='text' id='bankNo' class='ipt' maxlength='20' data-rule='对公结算银行账号:required;'/>
+            <input type='text' id='bankNo' class='ipt' maxlength='20'/>
         </td>
     </tr>
     <tr class="changeSettleBank">
         <th>转账类型<font color='red'>*</font>：</th>
         <td>
-            <select id='transferType' class='ipt' data-rule='转账类型:required;'>
+            <select id='transferType' class='ipt'>
                 {volist name=":WSTDatas('TRANSFER_TYPE')" id='vo'}
                 <option value='{$vo["dataVal"]}'>{$vo["dataName"]}</option>
                 {/volist}
@@ -450,7 +452,7 @@
     <tr class="changeSettleBank">
         <th>开户银行名称<font color='red'>*</font>：</th>
         <td>
-            <select id='bankId' class='ipt' data-rule='对公结算银行账号:required;'>
+            <select id='bankId' class='ipt'>
                 {foreach $bankList as $v}
                 <option value="{$v['bankId']}">{$v['bankName']}</option>
                 {/foreach}
@@ -460,13 +462,13 @@
     <tr class="changeSettleBank">
         <th>开户银行编号<font color='red'>*</font>：</th>
         <td>
-            <input type='text' id='openBankCode' class='ipt' maxlength='20' data-rule='开户银行编号:required;'/>
+            <input type='text' id='openBankCode' class='ipt' maxlength='20'/>
         </td>
     </tr>
     <tr class="changeSettleBank">
         <th>开户银行支行所在地<font color='red'>*</font>：</th>
         <td>
-            <select id="barea_0" class='j-bareas' level="0" onchange="WST.ITAreas({id:'barea_0',val:this.value,isRequire:true,className:'j-bareas'});">
+            <select id="barea_0" class='j-bareas' level="0" onchange="WST.ITAreas({id:'barea_0',val:this.value,className:'j-bareas'});">
                 <option value="">-请选择-</option>
                 {foreach $areaList as $v}
                 <option value="{$v['areaId']}">{$v['areaName']}</option>
@@ -475,23 +477,23 @@
         </td>
     </tr>
 
-
+    <!--支付宝结算参数-->
     <tr class="changeSettleAli" style="display: none;">
         <th>支付宝账号<font color='red'>*</font>：</th>
         <td>
-            <input type='text' id='aliAccount' class='ipt' maxlength='50' data-rule='支付宝账号:required;'/>
+            <input type='text' id='aliAccount' class='ipt' maxlength='50'/>
         </td>
     </tr>
     <tr class="changeSettleAli" style="display: none;">
         <th>姓名<font color='red'>*</font>：</th>
         <td>
-            <input type='text' id='aliName' class='ipt' maxlength='50' data-rule='姓名:required;'/>
+            <input type='text' id='aliName' class='ipt' maxlength='50'/>
         </td>
     </tr>
     <tr class="changeSettleAli" style="display: none;">
         <th>转账类型<font color='red'>*</font>：</th>
         <td>
-            <select id='aliTransferType' class='ipt' data-rule='转账类型:required;'>
+            <select id='aliTransferType' class='ipt'>
                 {volist name=":WSTDatas('TRANSFER_TYPE')" id='vo'}
                 <option value='{$vo["dataVal"]}'>{$vo["dataName"]}</option>
                 {/volist}
@@ -505,11 +507,27 @@
         </td>
     </tr>
 
-
+    <!--微信app结算参数-->
     <tr class="changeSettleWx" style="display: none;">
         <th>微信OpenID<font color='red'>*</font>：</th>
         <td>
-            <input type='text' id='wxOpenId' class='ipt' maxlength='50' data-rule='微信OpenID:required;'/>
+            <input type='text' id='wxOpenId' class='ipt' maxlength='50'/>
+        </td>
+    </tr>
+
+    <!--微信jsapi结算参数-->
+    <tr class="changeSettleWxJsapi" style="display: none;">
+        <th>微信OpenID<font color='red'>*</font>：</th>
+        <td>
+            <input type='text' id='wxJsapiOpenId' class='ipt' maxlength='50'/>
+        </td>
+    </tr>
+
+    <!--微信小程序结算参数-->
+    <tr class="changeSettleWxLite" style="display: none;">
+        <th>微信OpenID<font color='red'>*</font>：</th>
+        <td>
+            <input type='text' id='wxLiteOpenId' class='ipt' maxlength='50'/>
         </td>
     </tr>
 

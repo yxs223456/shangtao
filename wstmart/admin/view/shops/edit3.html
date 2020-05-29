@@ -1,0 +1,140 @@
+<fieldset class="layui-elem-field layui-field-title">
+<legend>结算账号信息</legend>
+<table class='wst-form wst-box-top'>
+    <tr>
+        <th width='150'>结算账户类型<font color='red'>*</font>：</th>
+        <td>
+            <select id='settleType' class='ipt' onchange="changeSettle(this)" data-rule='结算账户类型:required;'>
+                {volist name=":WSTDatas('SETTLE_TYPE')" id='vo'}
+                <option value='{$vo["dataVal"]}'>{$vo["dataName"]}</option>
+                {/volist}
+            </select>
+        </td>
+    </tr>
+
+    <!--银行结算参数-->
+    <tr class="changeSettleBank">
+        <th width='150'>银行开户名<font color='red'>*</font>：</th>
+        <td>
+            <input type='text' id='bankUserName' maxlength='50' class='ipt'
+                   value='{$settleData["bankUserName"]}'/>
+        </td>
+    </tr>
+    <tr class="changeSettleBank">
+        <th>对公结算银行账号<font color='red'>*</font>：</th>
+        <td>
+            <input type='text' id='bankNo' class='ipt' maxlength='20'
+                   value='{$settleData["bankNo"]}'/>
+        </td>
+    </tr>
+    <tr class="changeSettleBank">
+        <th>转账类型<font color='red'>*</font>：</th>
+        <td>
+            <select id='transferType' class='ipt'>
+                {volist name=":WSTDatas('TRANSFER_TYPE')" id='vo'}
+                {if $vo["dataVal"] == $settleData["transferType"]}
+                <option value='{$vo["dataVal"]}' selected>{$vo["dataName"]}</option>
+                {else/}
+                <option value='{$vo["dataVal"]}'>{$vo["dataName"]}</option>
+                {/if}
+                {/volist}
+            </select>
+        </td>
+    </tr>
+    <tr class="changeSettleBank">
+        <th>开户银行名称<font color='red'>*</font>：</th>
+        <td>
+            <select id='bankId' id='bankId' class='ipt'>
+                {foreach $bankList as $v}
+                <option value="{$v['bankId']}" {if $object[
+                'bankId']==$v['bankId']}selected{/if}>{$v['bankName']}</option>
+                {/foreach}
+            </select>
+        </td>
+    </tr>
+    <tr class="changeSettleBank">
+        <th>开户银行编号<font color='red'>*</font>：</th>
+        <td>
+            <input type='text' id='openBankCode' class='ipt' maxlength='20' value='{$settleData["openBankCode"]}'/>
+        </td>
+    </tr>
+    <tr class="changeSettleBank">
+        <th>开户银行支行所在地<font color='red'>*</font>：</th>
+        <td>
+            <select id="barea_0" class='j-bareas' level="0"
+                    onchange="WST.ITAreas({id:'barea_0',val:this.value,className:'j-bareas'});">
+                <option value="">-请选择-</option>
+                {foreach $areaList as $v}
+                <option value="{$v['areaId']}">{$v['areaName']}</option>
+                {/foreach}
+            </select>
+        </td>
+    </tr>
+
+    <!--支付宝结算参数-->
+    <tr class="changeSettleAli" style="display: none;">
+        <th>支付宝账号<font color='red'>*</font>：</th>
+        <td>
+            <input type='text' id='aliAccount' class='ipt' maxlength='50' value='{$settleData["aliAccount"]}'/>
+        </td>
+    </tr>
+    <tr class="changeSettleAli" style="display: none;">
+        <th>姓名<font color='red'>*</font>：</th>
+        <td>
+            <input type='text' id='aliName' class='ipt' maxlength='50' value='{$settleData["aliName"]}'/>
+        </td>
+    </tr>
+    <tr class="changeSettleAli" style="display: none;">
+        <th>转账类型<font color='red'>*</font>：</th>
+        <td>
+            <select id='aliTransferType' class='ipt'>
+                {volist name=":WSTDatas('TRANSFER_TYPE')" id='vo'}
+                {if $vo["dataVal"] == $settleData["aliTransferType"]}
+                <option value='{$vo["dataVal"]}' selected>{$vo["dataName"]}</option>
+                {else/}
+                <option value='{$vo["dataVal"]}'>{$vo["dataName"]}</option>
+                {/if}
+                {/volist}
+            </select>
+        </td>
+    </tr>
+    <tr class="changeSettleAli" style="display: none;">
+        <th>收款方账户类型：</th>
+        <td>
+            <input type='text' id='accountType' class='ipt' maxlength='50' value='{$settleData["accountType"]}'/>
+        </td>
+    </tr>
+
+    <!--微信app结算参数-->
+    <tr class="changeSettleWx" style="display: none;">
+        <th>微信OpenID<font color='red'>*</font>：</th>
+        <td>
+            <input type='text' id='wxOpenId' class='ipt' maxlength='50' value='{$settleData["wxOpenId"]}'/>
+        </td>
+    </tr>
+
+
+    <!--微信jsapi结算参数-->
+    <tr class="changeSettleWxJsapi" style="display: none;">
+        <th>微信OpenID<font color='red'>*</font>：</th>
+        <td>
+            <input type='text' id='wxJsapiOpenId' class='ipt' maxlength='50' value='{$settleData["wxJsapiOpenId"]}'/>
+        </td>
+    </tr>
+
+    <!--微信小程序结算参数-->
+    <tr class="changeSettleWxLite" style="display: none;">
+        <th>微信OpenID<font color='red'>*</font>：</th>
+        <td>
+            <input type='text' id='wxLiteOpenId' class='ipt' maxlength='50' value='{$settleData["wxLiteOpenId"]}'/>
+        </td>
+    </tr>
+
+  <tr>
+      <td colspan='2' align='center'>
+      	<button type="button"  class='btn btn-primary btn-mright' onclick='javascript:save()'><i class="fa fa-check"></i>保存</button>
+      	<button type="button"  class='btn' onclick='javascript:history.go(-1)'><i class="fa fa-angle-double-left"></i>返回</button>
+      </td>
+  </tr>
+</table>
+</fieldset>

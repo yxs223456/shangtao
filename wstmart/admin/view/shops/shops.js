@@ -556,19 +556,35 @@ function mapCity(){
 function changeSettle(obj) {
     console.log(obj.value);
     var settleType = obj.value;
-    if (settleType == "alipay") {
+    if (settleType == "2") {
         $('.changeSettleBank').hide();
         $('.changeSettleWx').hide();
+        $('.changeSettleWxJsapi').hide();
+        $('.changeSettleWxLite').hide();
         $('.changeSettleAli').show();
-
-    } else if (settleType == "wx" || settleType == "wx_pub" || settleType == "wx_lite") {
+    } else if (settleType == "3") {
         $('.changeSettleBank').hide();
         $('.changeSettleAli').hide();
+        $('.changeSettleWxJsapi').hide();
+        $('.changeSettleWxLite').hide();
         $('.changeSettleWx').show();
-    } else if (settleType == 'bank_account') {
+    } else if (settleType == "4") {
+        $('.changeSettleBank').hide();
         $('.changeSettleAli').hide();
         $('.changeSettleWx').hide();
+        $('.changeSettleWxLite').hide();
+        $('.changeSettleWxJsapi').show();
+    } else if (settleType == "5") {
+        $('.changeSettleBank').hide();
+        $('.changeSettleAli').hide();
+        $('.changeSettleWx').hide();
+        $('.changeSettleWxJsapi').hide();
+        $('.changeSettleWxLite').show();
+    } else if (settleType == '1') {
+        $('.changeSettleAli').hide();
+        $('.changeSettleWx').hide();
+        $('.changeSettleWxJsapi').hide();
+        $('.changeSettleWxLite').hide();
         $('.changeSettleBank').show();
     }
-
 }
