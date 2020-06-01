@@ -85,7 +85,6 @@ class Kuaidi extends Addons{
         	$express = $m->getExpress($params['orderId']);
         	if($express["expressNo"]!=""){
 	            $rs = $m->getOrderExpress($params['orderId']);
-	            
 	            $expressLogs = json_decode($rs, true);
 	            $this->assign('expressLogs', $expressLogs);
 	            return $this->fetch('view/admin/view');

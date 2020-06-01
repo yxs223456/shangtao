@@ -2,6 +2,11 @@
 namespace addons\kuaidi\model;
 use think\addons\BaseModel as Base;
 use think\Db;
+use think\facade\Env;
+use wstmart\common\helper\Redis;
+
+include_once Env::get('root_path') . 'wstmart/common/hepler/Redis.php';
+
 /**
  * ============================================================================
  * WSTMart多用户商城
@@ -58,26 +63,39 @@ class Kuaidi extends Base{
 	}
 	
 	public function getOrderExpress($orderId){
-		$conf = $this->getConf("Kuaidi");
+	    //先从缓存读取数据
+        $redis = Redis::factory();
+        $expressLogs = getOrderExpress($orderId, $redis);
+        if ($expressLogs) {
+            return $expressLogs;
+        }
+
+		$conf = config("account.kuaidi100");
 		$express = Db::name('orders')->where(["orderId"=>$orderId])->field(['expressId','expressNo'])->find();
 		
 		if($express["expressId"]>0){
 			$expressId = $express["expressId"];
 			$row = Db::name('express')->where(["expressId"=>$expressId])->find();
-			$typeCom =  strtolower($row["expressCode"]); //快递公司
+			$typeCom =  strtolower($row["expressCode"]); //快递公司在快递100的编码
 			$typeNu = $express["expressNo"]; //快递单号
 			
-			$appKey= $conf["kuaidiKey"];
-			
-			$expressLogs = null;
-			$companys = array('ems','shentong','yuantong','shunfeng','yunda','tiantian','zhongtong','zengyisudi');
-			if(in_array($typeCom,$companys)){
-				$url = 'http://www.kuaidi100.com/query?type=' . $typeCom . '&postid=' . $typeNu;
-			}else{
-				$url ='http://api.kuaidi100.com/api?id='.$appKey.'&com='.$typeCom.'&nu='.$typeNu.'&show=0&muti=1&order=asc';
-			}
-			$expressLogs = $this -> curl($url);
-			return $expressLogs;
+			$appKey= $conf["key"];
+			$customer = $conf["customer"];
+			$postData["customer"] = $customer;$postData["param"] = json_encode([
+			    "com" => $typeCom, //查询的快递公司的编码， 一律用小写字母
+			    "num" => $typeNu, //查询的快递单号
+            ]);
+
+            $url='https://poll.kuaidi100.com/poll/query.do';
+            $postData["sign"] = md5($postData["param"].$appKey.$postData["customer"]);
+            $postData["sign"] = strtoupper($postData["sign"]);
+            $expressLog = $this->curl($url, "post", $postData);
+
+            $result = json_decode($expressLog, true);
+            if (isset($result["data"])) {
+                cacheOrderExpress($orderId, $expressLog, $redis);
+            }
+			return $expressLog;
 		}
 		
 	}
@@ -89,18 +107,48 @@ class Kuaidi extends Base{
 		$data["goodlist"] = Db::name('orders o')->join('__ORDER_GOODS__ og','o.orderId=og.orderId')->where(["o.orderId"=>$orderId])->field(["goodsId","goodsImg"])->limit(1)->select();
 		return $data;
 	}
-	
-	public function curl($url) {
-		$curl = curl_init();
-		curl_setopt ($curl, CURLOPT_URL, $url);
-		curl_setopt ($curl, CURLOPT_HEADER,0);
-		curl_setopt ($curl, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt ($curl, CURLOPT_USERAGENT,$_SERVER['HTTP_USER_AGENT']);
-		curl_setopt ($curl, CURLOPT_TIMEOUT,5);
-		$content = curl_exec($curl);
-		curl_close ($curl);
-		return $content;
-	}
+
+    function curl($url, $method = 'get', $postData = null, $isPostDataJsonEncode = false, $isResponseJson = false, $cookie = null, $header = null, $isReturnHeader = false) {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        if (stripos($url, 'https') !== false) {
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        }
+        if ($isReturnHeader) {
+            curl_setopt($ch, CURLOPT_HEADER, 1);
+        }
+        if (strtolower($method) == 'post') {
+            curl_setopt($ch, CURLOPT_POST, 1);
+            if ($isPostDataJsonEncode && is_array($postData)) {
+                $postData = json_encode($postData, JSON_UNESCAPED_UNICODE);
+            }
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+        }
+        if (!empty($cookie)) {
+            curl_setopt($ch, CURLOPT_COOKIE, $cookie);
+        }
+        if (!empty($header) && is_array($header) && count($header)) {
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        }
+        $data = curl_exec($ch);
+        $err = curl_error($ch);
+        if ($err) {
+            $log = json_encode([
+                "url" => $url,
+                "data" => $postData,
+                "header" => $header,
+                "cookie" => $cookie,
+                "reason" => $err,
+            ], JSON_UNESCAPED_UNICODE);
+            \think\facade\Log::write("curl exec error: $log");
+            return false;
+        }
+        if ($isResponseJson) {
+            $data = json_decode($data, true);
+        }
+        return $data;
+    }
 	
 
 	public  function getOrderDeliver($orderId){
