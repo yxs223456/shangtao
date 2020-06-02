@@ -2,6 +2,7 @@
 namespace wstmart\admin\model;
 use think\Db;
 use Env;
+
 /**
  * ============================================================================
  * WSTMart多用户商城
@@ -109,8 +110,11 @@ class OrderRefunds extends Base{
         }else if($order->payType==1 && $order->payFrom=='alipays'){
         	$am = model("admin/Alipays");
         	$rs = $am->orderRefund($refund,$order);
-        }else{
-        	$rs = $this->saveOrderRefund($refund,$order);
+        } else if ($order->payType == 1 && $order->payFrom == 'ping') {
+            $am = model("admin/PingRefunds");
+            $rs = $am->orderRefund($refund,$order);
+        } else {
+            $rs = $this->saveOrderRefund($refund, $order);
         }
         return $rs;
 	}

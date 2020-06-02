@@ -5,6 +5,7 @@ namespace wstmart\common\helper;
 include_once(\Env::get('root_path') . 'extend/pingplusplus/pingpp-php/init.php');
 
 use Pingpp\Order;
+use Pingpp\OrderRefund;
 use Pingpp\Pingpp;
 use Pingpp\Charge;
 use Pingpp\SettleAccount;
@@ -323,12 +324,12 @@ class Ping
      * @param $amount int 订单总金额（必须大于 0）单位分
      * @param $subject string 商品标题，该参数最长为 32
      * @param $body string 商品描述信息，该参数最长为 128
-     * @param $royaltyUsersId string 分润用户id
+     * @param $royaltyUsers array 分润用户
      * @param string $currency 3 位 ISO 货币代码
      * @return Order
      * @throws Exception
      */
-    public static function orderCreate($orderNo, $amount, $subject, $body, $royaltyUsersId, $currency = 'cny')
+    public static function orderCreate($orderNo, $amount, $subject, $body, $royaltyUsers, $currency = 'cny')
     {
         self::init();
         if (empty($orderNo) || empty($amount) || empty($subject) || empty($body)) {
@@ -339,11 +340,6 @@ class Ping
             throw new Exception("appId 不存在");
         }
 
-        $royaltyUser = array(
-            'user' => $royaltyUsersId,
-            'amount' => $amount
-        );
-
         $data = array(
             'app' => $app,
             'merchant_order_no' => $orderNo,
@@ -352,7 +348,7 @@ class Ping
             'currency' => $currency,
             'subject' => $subject,
             'body' => $body,
-            'royalty_users' => [$royaltyUser]
+            'royalty_users' => $royaltyUsers,
         );
 
         return Order::create(array_filter($data));
@@ -383,6 +379,33 @@ class Ping
             'channel' => $channel
         );
         return Order::pay($orderId, $data);
+    }
+
+    /**
+     * 订单退款
+     *
+     * @param $orderId string 支付订单生成的ID
+     * @param $description string 描述
+     * @param $royaltyUsers array 需要退分润的用户和金额
+     * @return array|\Pingpp\PingppObject
+     * @throws Exception
+     */
+    public static function orderRefund($orderId, $description, $royaltyUsers)
+    {
+        self::init();
+        if (empty($orderId) || empty($description) || empty($royaltyUsers)) {
+            throw new Exception("参数错误");
+        }
+        $app = self::getConfig("appId");
+        if (empty($app)) {
+            throw new Exception("appId 不存在");
+        }
+
+        $data = array(
+            'description' => $description,
+            'royalty_users' => $royaltyUsers,
+        );
+        return OrderRefund::create($orderId, array_filter($data));
     }
 
     /*****************************************************订单相关****************************************************/
