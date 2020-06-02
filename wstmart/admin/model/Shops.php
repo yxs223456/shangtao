@@ -50,7 +50,7 @@ class Shops extends Base
             ->join('__SHOP_ADMIN__ u', 'u.id=s.shopAdminId', 'left')
             ->join('__SHOP_EXTRAS__ ss', 's.shopId=ss.shopId', 'left')
             ->where($where)
-            ->field('u.userPhone,s.shopId,shopSn,shopName,a2.areaName,shopkeeper,telephone,shopAddress,shopCompany,shopAtive,shopStatus')
+            ->field('u.userPhone,s.shopId,s.pingUserId,shopSn,shopName,a2.areaName,shopkeeper,telephone,shopAddress,shopCompany,shopAtive,shopStatus')
             ->order($order)
             ->paginate(input('limit/d'));
     }
@@ -891,7 +891,9 @@ class Shops extends Base
             'userJson' => json_encode($user->jsonSerialize())
         );
 
-        $pingUserId = Db::name("ping_users")->insertGetId($userData);
+        Db::name("ping_users")->insertGetId($userData);
+        // shop表添加pingUserId
+        Db::name("shops")->where("shopId", $shopId)->update(array("pingUserId" => $id));
 
         $recipient = array();
         // 创建结算账户
@@ -998,4 +1000,40 @@ class Shops extends Base
         return Db::name('ping_settles')->where("id", $isExists["id"])->update($insertData);
     }
 
+    /**
+     * 创建结算用户
+     *
+     * @return array
+     */
+    public function createUser()
+    {
+        $shopId = input('post.id/d');
+        $shop = $this->get($shopId);
+        if (empty($shop)) return WSTReturn('店铺不存在');
+        if (!empty($shop["pingUserId"])) {
+            return WSTReturn("已创建");
+        }
+        Db::startTrans();
+        try {
+            // 创建用户
+            $userId = uniqid($shopId . "_");
+            $user = Ping::createUser($userId);
+            $id = $user->offsetGet("id");
+
+            $userData = array(
+                'shopId' => $shopId,
+                'pingUserId' => $id,
+                'userJson' => json_encode($user->jsonSerialize())
+            );
+
+            Db::name("ping_users")->insertGetId($userData);
+            // shop表添加pingUserId
+            Db::name("shops")->where("shopId", $shopId)->update(array("pingUserId" => $id));
+            Db::commit();
+            return WSTReturn("删除成功", 1);
+        } catch (\Exception $e) {
+            Db::rollback();
+        }
+        return WSTReturn('删除失败', -1);
+    }
 }

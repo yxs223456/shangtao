@@ -14,6 +14,9 @@ function initGrid(){
 	        }},
             {title:'操作', name:'' ,width:150, align:'center', renderer: function(val,item,rowIndex){
                 var h = "";
+                if (item['pingUserId'] === '') {
+                    h += "<a class='btn btn-blue' href='javascript:toSetUser(" + item['shopId'] + ")'><i class='fa fa-pencil'></i>用户</a> "
+                }
 	            if(WST.GRANT.DPGL_02)h += "<a class='btn btn-blue' href='javascript:toEdit(" + item['shopId'] + ")'><i class='fa fa-pencil'></i>修改</a> ";
 	            if(WST.GRANT.DPGL_03 && item['shopId']!=1)h += "<a class='btn btn-red' href='javascript:toDel(" + item['shopId'] + ")'><i class='fa fa-trash-o'></i>删除</a> "; 
 	            // h += "<a class='btn btn-blue' href='"+WST.U('admin/logmoneys/tologmoneys','id='+item['shopId'])+"&type=1'><i class='fa fa-search'></i>商家资金</a>";
@@ -587,4 +590,21 @@ function changeSettle(obj) {
         $('.changeSettleWxLite').hide();
         $('.changeSettleBank').show();
     }
+}
+
+function toSetUser(id){
+    var box = WST.confirm({content:"您确定要创建结算用户吗?",yes:function(){
+        var loading = WST.msg('正在提交数据，请稍后...', {icon: 16,time:60000});
+        $.post(WST.U('admin/shops/createUser'),{id:id},function(data,textStatus){
+            layer.close(loading);
+            var json = WST.toAdminJson(data);
+            if(json.status=='1'){
+                WST.msg("操作成功",{icon:1});
+                layer.close(box);
+                loadGrid();
+            }else{
+                WST.msg(json.msg,{icon:2});
+            }
+        });
+    }});
 }

@@ -164,4 +164,14 @@ class Shops extends Base{
         $m = new M();
         return $m->handleApply();
     }
+
+    /**
+     * 创建结算用户
+     *
+     * @return mixed
+     */
+    public function createUser() {
+        $m = new M();
+        return $m->createUser();
+    }
 }
