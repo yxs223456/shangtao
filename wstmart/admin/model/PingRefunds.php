@@ -31,7 +31,8 @@ class PingRefunds extends Base{
                 'user' => $pingUserId,
                 'amount_refunded' => $backMoney
             );
-            $refund = Ping::orderRefund($pingOrderId, "订单退款", array($royaltyUser));
+            $metaData = array("orderId" => $order["orderId"]);
+            $pingRefund = Ping::orderRefund($pingOrderId, "订单退款", array($royaltyUser), $metaData);
 
             $insert = array();
             $insert['shopId'] = $order["shopId"];
@@ -39,10 +40,21 @@ class PingRefunds extends Base{
             $insert['pingOrderId'] = $pingOrderId;
             $insert['amount'] = $backMoney;
             $insert['royaltyUsers'] = json_encode($royaltyUser);
-            $insert['responseData'] = json_encode($refund->jsonSerialize());
+            $insert['responseData'] = json_encode($pingRefund->jsonSerialize());
             $insert['notifyData'] = "";
             $insert['createTime'] = date("Y-m-d H:i:s");
             $this->insertGetId($insert);
+
+            // 更新订单退款成功
+            $order->isRefund = 1;
+            $order->save();
+
+            //修改退款单信息
+            $content = input('post.content');
+            $refund->refundRemark = $content;
+            $refund->refundTime = date('Y-m-d H:i:s');
+            $refund->refundStatus = 2;
+            $refund->save();
 
         } catch (\Throwable $e) {
             return WSTReturn($e->getMessage(), -1);
