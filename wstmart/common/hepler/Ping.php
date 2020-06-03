@@ -387,11 +387,13 @@ class Ping
      * @param $orderId string 支付订单生成的ID
      * @param $description string 描述
      * @param $royaltyUsers array 需要退分润的用户和金额
+     * @param $money int 退款金额
+     * @param $chargeId string 退款change Id
      * @param $metaData array 其他数据
      * @return array|\Pingpp\PingppObject
      * @throws Exception
      */
-    public static function orderRefund($orderId, $description, $royaltyUsers, $metaData = array())
+    public static function orderRefund($orderId, $description, $royaltyUsers,$money,$chargeId, $metaData = array())
     {
         self::init();
         if (empty($orderId) || empty($description) || empty($royaltyUsers)) {
@@ -405,6 +407,8 @@ class Ping
         $data = array(
             'description' => $description,
             'royalty_users' => $royaltyUsers,
+            'charge' => $chargeId,
+            'charge_amount' => $money,
             'metadata' => $metaData
         );
         return OrderRefund::create($orderId, array_filter($data));

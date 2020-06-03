@@ -21,8 +21,10 @@ class PingRefunds extends Base{
             $tradeNo = empty($order['tradeNo']) ? "" : $order['tradeNo'];
             $backMoney = empty($refund["backMoney"]) ? 0 : (int)bcmul($refund["backMoney"], 100);
             $pingUserId = Db::name("shops")->where("shopId", $order["shopId"])->value("pingUserId");
-            $pingOrderId = Db::name("ping_pays")->where("outTradeNo", $tradeNo)->value("pingOrderId");
-            if (empty($tradeNo) || empty($backMoney) || empty($pingUserId) || empty($pingOrderId)) {
+            $pingPay = Db::name("ping_pays")->field("pingOrderId,chargeId")->where("outTradeNo", $tradeNo)->find();
+            $pingOrderId = empty($pingPay["pingOrderId"]) ? "" : $pingPay["pingOrderId"];
+            $changeId = empty($pingPay["chargeId"]) ? "" : $pingPay["chargeId"];
+            if (empty($tradeNo) || empty($backMoney) || empty($pingUserId) || empty($pingOrderId) || empty($changeId)) {
                 Log::error("[refund error] : " . $order["orderId"] . "tradeNo,backMoney,pingOrderId or pingUserId not empty");
                 return WSTReturn("退款失败", -1);
             }
@@ -32,12 +34,13 @@ class PingRefunds extends Base{
                 'amount_refunded' => $backMoney
             );
             $metaData = array("orderId" => $order["orderId"]);
-            $pingRefund = Ping::orderRefund($pingOrderId, "订单退款", array($royaltyUser), $metaData);
+            $pingRefund = Ping::orderRefund($pingOrderId, "订单退款", array($royaltyUser), $backMoney, $changeId, $metaData);
 
             $insert = array();
             $insert['shopId'] = $order["shopId"];
             $insert['orderId'] = $order["orderId"];
             $insert['pingOrderId'] = $pingOrderId;
+            $insert['chargeId'] = $changeId;
             $insert['amount'] = $backMoney;
             $insert['royaltyUsers'] = json_encode($royaltyUser);
             $insert['responseData'] = json_encode($pingRefund->jsonSerialize());

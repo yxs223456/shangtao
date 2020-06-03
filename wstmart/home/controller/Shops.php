@@ -74,7 +74,7 @@ class Shops extends Base{
 	 * 商家登录
 	 */
 	public function login(){
-		$SHOP = session('WST_SHOP');
+//		$SHOP = session('WST_SHOP');
         if(!empty($SHOP) && isset($SHOP['shopId'])){
             $this->redirect("shops/index");
         }
