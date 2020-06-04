@@ -435,8 +435,11 @@ class Goods extends Base{
             $batchNo = empty($data["batchNo"]) ? uniqid() : $data['batchNo'];
             $batchName = empty($data["batchName"]) ? $goods["goodsName"] . date("YmdHis") : $data['batchName'];
             $productCode = array($goods['productNo']);
-            if(empty($templateNo)) {
+            if (empty($templateNo)) {
                 throw new Exception("模版编号不能为空");
+            }
+            if (mb_strlen($batchName) < 6) {
+                throw new Exception("批次名称长度不能少于6个字符");
             }
 
             $result = Vonetracer::upload($templateNo, $batchNo, $batchName, $productCode);
