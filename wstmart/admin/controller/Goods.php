@@ -108,4 +108,24 @@ class Goods extends Base{
     	$m = new M();
     	return $m->del();
     }
+
+    /**
+     * 溯源
+     *
+     * @return mixed|string
+     */
+    public function vonetracer() {
+        $this->assign("goodsId",input("id",0));
+        return $this->fetch();
+    }
+
+    /**
+     * 产品上链操作
+     *
+     * @return array
+     */
+    public function traceUpload() {
+        $m = new M();
+        return $m->traceUpload();
+    }
 }

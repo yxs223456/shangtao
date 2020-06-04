@@ -1,6 +1,10 @@
 <?php
 namespace wstmart\admin\model;
 use think\Db;
+use think\Exception;
+use think\facade\Log;
+use wstmart\common\helper\Vonetracer;
+
 /**
  * ============================================================================
  * WSTMart多用户商城
@@ -40,8 +44,9 @@ class Goods extends Base{
 		}
 		$keyCats = model('GoodsCats')->listKeyAll();
 		$rs = $this->alias('g')->join('__SHOPS__ s','g.shopId=s.shopId','left')
+            ->leftJoin('goods_vonetracers gv','g.goodsId=gv.goodsId')
 		    ->where($where)
-			->field('goodsId,goodsName,goodsSn,saleNum,shopPrice,g.shopId,goodsImg,s.shopName,goodsCatIdPath')
+			->field('g.goodsId,g.goodsName,g.goodsSn,g.saleNum,shopPrice,g.shopId,goodsImg,s.shopName,goodsCatIdPath,gv.status')
 			->order($order)
 			->paginate(input('limit/d'))->toArray();
 		foreach ($rs['data'] as $key => $v){
@@ -407,5 +412,53 @@ class Goods extends Base{
 			return WSTReturn('操作成功',1);
 		}
         return WSTReturn('删除失败',-1);
+    }
+
+    /**
+     * 溯源上链操作
+     *
+     * @return array
+     */
+    public function traceUpload() {
+        $data = input('post.');
+
+        try{
+            $goods = $this->where("dataFlag",1)->where("goodsId", $data["goodsId"])->find();
+            if (empty($goods)) {
+                throw new Exception("商品已删除");
+            }
+            $trace = Db::name("goods_vonetracers")->where("goodsId", $data["goodsId"])->find();
+            if (!empty($trace)) {
+                throw new Exception("已溯源");
+            }
+            $templateNo = $data["templateNo"] ?? "";
+            $batchNo = empty($data["batchNo"]) ? uniqid() : $data['batchNo'];
+            $batchName = empty($data["batchName"]) ? $goods["goodsName"] . date("YmdHis") : $data['batchName'];
+            $productCode = array($goods['productNo']);
+            if(empty($templateNo)) {
+                throw new Exception("模版编号不能为空");
+            }
+
+            $result = Vonetracer::upload($templateNo, $batchNo, $batchName, $productCode);
+            if (isset($result['code']) && $result['code'] != 0) {
+                throw new Exception($result['msg']);
+            }
+
+            $insertData = array(
+                'goodsId' => $data['goodsId'],
+                'templateNo' => $templateNo,
+                'batchNo' => $batchNo,
+                'batchName' => $batchName,
+                'productCode' => json_encode($productCode),
+                'batchInfo' => '',
+                'recordInfo' => '',
+                'createTime' => date("Y-m-d H:i:s")
+            );
+            Db::name("goods_vonetracers")->insertGetId($insertData);
+
+        }catch (\Exception $e) {
+            return WSTReturn($e->getMessage(),-1);
+        }
+        return WSTReturn("溯源成功", 1);
     }
 }

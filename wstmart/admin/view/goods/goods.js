@@ -21,6 +21,7 @@ function initSaleGrid(){
             {title:'销量', name:'saleNum' ,width:20,sortable:true,align:'center'},
             {title:'操作', name:'' ,width:150, align:'center', renderer: function(val,item,rowIndex){
                 var h = "";
+                if(item['status'] < 1)h+= "<a class='btn btn-red' href='javascript:vontracers(" + item['goodsId'] + ")'><i class='fa fa-location-arrow'></i>溯源</a> ";
 	            if(WST.GRANT.SJSP_04)h += "<a class='btn btn-red' href='javascript:illegal(" + item['goodsId'] + ",1)'><i class='fa fa-ban'></i>违规下架</a> ";
 	            if(WST.GRANT.SJSP_03)h += "<a class='btn btn-red' href='javascript:del(" + item['goodsId'] + ",1)'><i class='fa fa-trash-o'></i>删除</a> "; 
 	            return h;
@@ -229,4 +230,32 @@ function initIllegalGrid(){
 }
 function toolTip(){
     WST.toolTip();
+}
+
+function vontracers(id){
+    location.href=WST.U('admin/goods/vonetracer','id='+id);
+}
+
+function traceUpload() {
+    $('#editFrom').isValid(function(v){
+        if(v){
+            var params = WST.getParams('.ipt');
+            params.areaId = WST.ITGetAreaVal('j-areas');
+            params.bankAreaId = WST.ITGetAreaVal('j-bareas');
+            params.businessAreaPath0 = WST.ITGetAreaVal('j-careas');
+            var loading = WST.msg('正在提交数据，请稍后...', {icon: 16,time:60000});
+            $.post(WST.U('admin/goods/traceUpload'),params,function(data,textStatus){
+                layer.close(loading);
+                var json = WST.toAdminJson(data);
+                if(json.status=='1'){
+                    WST.msg("操作成功",{icon:1,time:1000},function(){
+                        location.href=WST.U('admin/goods/index');
+                    });
+
+                }else{
+                    WST.msg(json.msg,{icon:2});
+                }
+            });
+        }
+    });
 }

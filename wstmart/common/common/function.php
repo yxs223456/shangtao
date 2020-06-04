@@ -13,6 +13,9 @@
  */
 include_once(\think\facade\Env::get('root_path') . "wstmart/common/hepler/AliyunOss.php");
 include_once(\think\facade\Env::get('root_path') . "wstmart/common/hepler/Ping.php");
+include_once(\think\facade\Env::get('root_path') . "wstmart/common/hepler/Vonetracer.php");
+include_once(\think\facade\Env::get('root_path') . "wstmart/common/hepler/Redis.php");
+include_once(\think\facade\Env::get('root_path') . "wstmart/common/template/redisTemplate.php");
 use think\Db;
 
 

@@ -30,7 +30,7 @@ function getVonetracerToken(Redis $redis)
     $key = "guangjiaohui:vonetracerToken";
     $data = $redis->get($key);
     if ($data) {
-        return json_decode($data);
+        return json_decode($data,true);
     }
     return null;
 }

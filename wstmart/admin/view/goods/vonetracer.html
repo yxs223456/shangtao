@@ -1,0 +1,47 @@
+{extend name="base" /}
+{block name="css"}
+<link href="__STATIC__/plugins/validator/jquery.validator.css?v={$v}" rel="stylesheet">
+{/block}
+{block name="main"}
+
+<form id='editFrom' autocomplete='off'>
+<input type='hidden' id='shopId' class='ipt' value=""/>
+<fieldset class="layui-elem-field layui-field-title">
+  <legend>溯源信息</legend>
+    <table class='wst-form wst-box-top'>
+    <input type='hidden' id='goodsId' class='ipt' value="{$goodsId}"/>
+    <tr>
+        <th width="150">模版编号<font color='red'>*</font>：</th>
+        <td>
+            <input type='text' id='templateNo' class='ipt' maxlength='50' data-rule="模版编号: required;"/>
+        </td>
+    </tr>
+
+    <tr>
+        <th width="150">批次编号：</th>
+        <td>
+            <input type='text' id='batchNo' class='ipt' maxlength='50'/>
+        </td>
+    </tr>
+
+    <tr>
+        <th width="150">批次名称：</th>
+        <td>
+            <input type='text' id='batchName' class='ipt' maxlength='50'/>
+        </td>
+    </tr>
+
+  <tr>
+       <td colspan='2' align='center'>
+         <button type="button"  class='btn btn-primary btn-mright b' onclick='javascript:traceUpload()'><i class="fa fa-check"></i>保存</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+       	 <button type="button"  class='btn' onclick='javascript:history.go(-1)'><i class="fa fa-angle-double-left" ></i>返回</button>
+       </td>
+  </tr>
+</table>
+</fieldset>
+</form>
+
+{/block}
+{block name="js"}
+<script src="__ADMIN__/goods/goods.js?v={$v}" type="text/javascript"></script>
+{/block}
