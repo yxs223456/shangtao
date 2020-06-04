@@ -433,7 +433,7 @@ class Goods extends Base{
             }
             $templateNo = $data["templateNo"] ?? "";
             $batchNo = empty($data["batchNo"]) ? uniqid() : $data['batchNo'];
-            $batchName = empty($data["batchName"]) ? $goods["goodsName"] . date("YmdHis") : $data['batchName'];
+            $batchName = empty($data["batchName"]) ? $goods["goodsName"] . date("Ymd") : $data['batchName'];
             $productCode = array($goods['productNo']);
             if (empty($templateNo)) {
                 throw new Exception("模版编号不能为空");
