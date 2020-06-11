@@ -26,7 +26,10 @@ function initSaleGrid(){
 				if(item['status'] === 1) {
                     return "<span  >创建中</span>";
 				}
-				return "<span  >已完成</span>"
+				if (item['status'] === 2) {
+                    return "<span  >已完成</span>";
+                }
+                return "<span  >失败</span>";
 
 			}},
             {title:'操作', name:'' ,width:150, align:'center', renderer: function(val,item,rowIndex){

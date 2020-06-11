@@ -437,7 +437,8 @@ class Goods extends Base{
             } else if (!empty($trace) && $trace["status"] == 2) {
                 return WSTReturn("success", 1, array("url" => $vonetracerUrl));
             } else if (!empty($trace) && $trace['status'] == 3) {
-                return WSTReturn("溯源失败",-1);
+                $this->doUpload($goods,false);
+                return WSTReturn("重新溯源,请稍后查询",-1);
             }
 
             $this->doUpload($goods);
@@ -452,9 +453,10 @@ class Goods extends Base{
      * 上链操作
      *
      * @param $goods
+     * @param $insert bool
      * @throws Exception
      */
-    public function doUpload($goods)
+    public function doUpload($goods, $insert = true)
     {
         $templateNo = config("account.vonetracer.templateNo") ?? "";
         $batchNo = uniqid();
@@ -480,6 +482,11 @@ class Goods extends Base{
             'createTime' => date("Y-m-d H:i:s")
         );
 
-        Db::name("goods_vonetracers")->insertGetId($insertData);
+        if($insert) {
+            Db::name("goods_vonetracers")->insertGetId($insertData);
+        } else {
+            $insertData['status'] = 1;
+            Db::name('goods_vonetracers')->where("goodsId", $goods["goodsId"])->update($insertData);
+        }
     }
 }
