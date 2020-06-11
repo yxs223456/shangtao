@@ -436,6 +436,8 @@ class Goods extends Base{
                 return WSTReturn("溯源中,请稍后查看", -1);
             } else if (!empty($trace) && $trace["status"] == 2) {
                 return WSTReturn("success", 1, array("url" => $vonetracerUrl));
+            } else if (!empty($trace) && $trace['status'] == 3) {
+                return WSTReturn("溯源失败",-1);
             }
 
             $this->doUpload($goods);
