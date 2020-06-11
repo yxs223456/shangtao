@@ -304,6 +304,11 @@ class Goods extends CGoods{
 		    	//保存关键字
         	    $searchKeys = WSTGroupGoodsSearchKey($goodsId);
         	    $this->where('goodsId',$goodsId)->update(['goodsSerachKeywords'=>implode(',',$searchKeys)]);
+
+        	    // 创建溯源
+                $goods = $this->where("dataFlag", 1)->where("goodsId", $goodsId)->find();
+                $service = new \wstmart\admin\model\Goods();
+                $service->doUpload($goods);
     	        Db::commit();
 				return WSTReturn("新增成功", 1,['id'=>$goodsId]);
 			}else{

@@ -19,9 +19,19 @@ function initSaleGrid(){
                 return "<span  ><p class='wst-nowrap'>"+item['goodsCatName']+"</p></span>";
             }},
             {title:'销量', name:'saleNum' ,width:20,sortable:true,align:'center'},
+			{title:'溯源', name:'status' ,width:20,align:'center',renderer: function(val,item,rowIndex){
+                if(item['status'] < 1) {
+                	return "<span  >未创建</span>"
+				}
+				if(item['status'] === 1) {
+                    return "<span  >创建中</span>";
+				}
+				return "<span  >已完成</span>"
+
+			}},
             {title:'操作', name:'' ,width:150, align:'center', renderer: function(val,item,rowIndex){
                 var h = "";
-                if(item['status'] < 1)h+= "<a class='btn btn-red' href='javascript:vontracers(" + item['goodsId'] + ")'><i class='fa fa-location-arrow'></i>溯源</a> ";
+                h+= "<a class='btn btn-red' href='javascript:vontracers(" + item['goodsId'] + ")'><i class='fa fa-location-arrow'></i>溯源</a> ";
 	            if(WST.GRANT.SJSP_04)h += "<a class='btn btn-red' href='javascript:illegal(" + item['goodsId'] + ",1)'><i class='fa fa-ban'></i>违规下架</a> ";
 	            if(WST.GRANT.SJSP_03)h += "<a class='btn btn-red' href='javascript:del(" + item['goodsId'] + ",1)'><i class='fa fa-trash-o'></i>删除</a> "; 
 	            return h;
@@ -232,8 +242,21 @@ function toolTip(){
     WST.toolTip();
 }
 
-function vontracers(id){
-    location.href=WST.U('admin/goods/vonetracer','id='+id);
+function vontracers(id) {
+    var loading = WST.msg('请稍后...', {icon: 16,time:60000});
+    $.post(WST.U('admin/goods/vonetracer'), {id: id}, function (data, textStatus) {
+        layer.close(loading);
+        var json = WST.toAdminJson(data);
+        if (json.status == '1') {
+            // WST.msg("操作成功", {icon: 1, time: 1000}, function () {
+                location.href = json.data.url;
+            // });
+
+        } else {
+            WST.msg(json.msg, {icon: 2});
+            loadGrid();
+        }
+    });
 }
 
 function traceUpload() {

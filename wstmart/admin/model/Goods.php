@@ -417,51 +417,67 @@ class Goods extends Base{
     /**
      * 溯源上链操作
      *
-     * @return array
+     * @return bool
      */
-    public function traceUpload() {
-        $data = input('post.');
+    public function traceUpload()
+    {
+        $goodsId = input('id', 0);
 
-        try{
-            $goods = $this->where("dataFlag",1)->where("goodsId", $data["goodsId"])->find();
+        $baseUrl = config("account.vonetracer.baseUrl");
+        $vonetracerUrl = $baseUrl . "?id=" . $goodsId;
+
+        try {
+            $goods = $this->where("dataFlag", 1)->where("goodsId", $goodsId)->find();
             if (empty($goods)) {
                 throw new Exception("商品已删除");
             }
-            $trace = Db::name("goods_vonetracers")->where("goodsId", $data["goodsId"])->find();
-            if (!empty($trace)) {
-                throw new Exception("已溯源");
-            }
-            $templateNo = $data["templateNo"] ?? "";
-            $batchNo = empty($data["batchNo"]) ? uniqid() : $data['batchNo'];
-            $batchName = empty($data["batchName"]) ? $goods["goodsName"] . date("Ymd") : $data['batchName'];
-            $productCode = array($goods['productNo']);
-            if (empty($templateNo)) {
-                throw new Exception("模版编号不能为空");
-            }
-            if (mb_strlen($batchName) < 6) {
-                throw new Exception("批次名称长度不能少于6个字符");
+            $trace = Db::name("goods_vonetracers")->where("goodsId", $goodsId)->find();
+            if (!empty($trace) && $trace["status"] == 1) {
+                return WSTReturn("溯源中,请稍后查看", -1);
+            } else if (!empty($trace) && $trace["status"] == 2) {
+                return WSTReturn("success", 1, array("url" => $vonetracerUrl));
             }
 
-            $result = Vonetracer::upload($templateNo, $batchNo, $batchName, $productCode);
-            if (isset($result['code']) && $result['code'] != 0) {
-                throw new Exception($result['msg']);
-            }
+            $this->doUpload($goods);
 
-            $insertData = array(
-                'goodsId' => $data['goodsId'],
-                'templateNo' => $templateNo,
-                'batchNo' => $batchNo,
-                'batchName' => $batchName,
-                'productCode' => json_encode($productCode),
-                'batchInfo' => '',
-                'recordInfo' => '',
-                'createTime' => date("Y-m-d H:i:s")
-            );
-            Db::name("goods_vonetracers")->insertGetId($insertData);
-
-        }catch (\Exception $e) {
-            return WSTReturn($e->getMessage(),-1);
+        } catch (\Exception $e) {
+            return WSTReturn($e->getMessage(), -1);
         }
-        return WSTReturn("溯源成功", 1);
+        return WSTReturn("已溯源,请稍后查看", -1);
+    }
+
+    /**
+     * 上链操作
+     *
+     * @param $goods
+     * @throws Exception
+     */
+    public function doUpload($goods)
+    {
+        $templateNo = config("account.vonetracer.templateNo") ?? "";
+        $batchNo = uniqid();
+        $batchName = $goods["goodsName"] . date("Ymd");
+        $productCode = array($goods['productNo']);
+        if (empty($templateNo)) {
+            throw new Exception("模版编号不能为空");
+        }
+
+        $result = Vonetracer::upload($templateNo, $batchNo, $batchName, $productCode);
+        if (isset($result['code']) && $result['code'] != 0) {
+            throw new Exception($result['msg']);
+        }
+
+        $insertData = array(
+            'goodsId' => $goods['goodsId'],
+            'templateNo' => $templateNo,
+            'batchNo' => $batchNo,
+            'batchName' => $batchName,
+            'productCode' => json_encode($productCode),
+            'batchInfo' => '',
+            'recordInfo' => '',
+            'createTime' => date("Y-m-d H:i:s")
+        );
+
+        Db::name("goods_vonetracers")->insertGetId($insertData);
     }
 }

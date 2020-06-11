@@ -110,21 +110,10 @@ class Goods extends Base{
     }
 
     /**
-     * 溯源
-     *
-     * @return mixed|string
+     * 溯源 产品上链操作 如果已溯源跳转地址
      */
-    public function vonetracer() {
-        $this->assign("goodsId",input("id",0));
-        return $this->fetch();
-    }
-
-    /**
-     * 产品上链操作
-     *
-     * @return array
-     */
-    public function traceUpload() {
+    public function vonetracer()
+    {
         $m = new M();
         return $m->traceUpload();
     }
